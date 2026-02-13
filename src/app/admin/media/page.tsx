@@ -99,9 +99,9 @@ export default function MediaPage() {
 
   return (
     <div className="space-y-5">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Médiathèque</h1>
-        <div>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-heading text-3xl font-bold sm:text-4xl">Médiathèque</h1>
+        <div className="w-full sm:w-auto">
           <input
             ref={fileInputRef}
             type="file"
@@ -113,6 +113,7 @@ export default function MediaPage() {
           <Button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
+            className="w-full sm:w-auto"
           >
             <Upload size={16} className="mr-1" />
             {uploading ? "Envoi..." : "Téléverser"}

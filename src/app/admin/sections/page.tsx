@@ -58,9 +58,10 @@ export default function SectionsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Sections</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-heading text-3xl font-bold sm:text-4xl">Sections</h1>
         <Button
+          className="w-full sm:w-auto"
           onClick={() => {
             setEditSection(null);
             setFormOpen(true);
@@ -78,8 +79,8 @@ export default function SectionsPage() {
         <div className="grid gap-4">
           {sections.map((section) => (
             <Card key={section.id} className="glass-panel">
-              <CardHeader className="flex flex-row items-center justify-between py-3">
-                <div className="flex items-center gap-3">
+              <CardHeader className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center gap-2">
                   <CardTitle className="text-base">{section.title}</CardTitle>
                   <Badge variant="secondary">
                     {layoutLabels[section.layout_type] || section.layout_type}
@@ -88,7 +89,7 @@ export default function SectionsPage() {
                     {section.is_visible ? "Visible" : "Masquée"}
                   </Badge>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 self-end sm:self-auto">
                   <Button
                     variant="ghost"
                     size="icon"

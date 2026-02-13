@@ -214,9 +214,9 @@ export default function BookingsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Réservations</h1>
-        <Button variant="outline" onClick={exportCsv}>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-heading text-3xl font-bold sm:text-4xl">Réservations</h1>
+        <Button variant="outline" onClick={exportCsv} className="w-full sm:w-auto">
           <Download size={16} className="mr-1" /> Exporter CSV
         </Button>
       </div>
@@ -284,15 +284,15 @@ export default function BookingsPage() {
         </Card>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <Input
           placeholder="Rechercher par nom ou e‑mail..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger className="w-full sm:w-44">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

@@ -85,9 +85,10 @@ export default function ProgramsPage() {
 
   return (
     <div className="space-y-5">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Programmes</h1>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-heading text-3xl font-bold sm:text-4xl">Programmes</h1>
         <Button
+          className="w-full sm:w-auto"
           onClick={() => {
             setEditProgram(null);
             setFormOpen(true);
@@ -102,7 +103,7 @@ export default function ProgramsPage() {
           placeholder="Rechercher des programmes..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
       </div>
 
