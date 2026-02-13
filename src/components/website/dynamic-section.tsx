@@ -285,6 +285,8 @@ export function DynamicSection({ section }: DynamicSectionProps) {
           : undefined
       }
     >
+      <div className="section-ornament" aria-hidden="true" />
+      <div className="section-ornament section-ornament--bottom" aria-hidden="true" />
       {section.layout_type === "full-bleed" && (
         <>
           <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(11,11,13,0.88),rgba(11,11,13,0.52)_45%,rgba(11,11,13,0.9))]" />
@@ -380,9 +382,10 @@ function GridContent({ content }: { content: Record<string, unknown> }) {
         return (
           <div
             key={card.title}
-            className="grid-card rounded-[1.5rem] border border-ivory/15 bg-ivory/5 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-shadow hover:shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+            className="grid-card artisan-card rounded-[1.5rem] border border-ivory/15 bg-ivory/5 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-shadow hover:shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
             style={{ willChange: "transform, opacity" }}
           >
+            <div className="glint" aria-hidden="true" />
             <div className="icon-circle mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/20 bg-ivory/10">
               <Icon size={24} className="text-gold" />
             </div>
@@ -554,11 +557,12 @@ function TextSideContent({
         {quotes.map((quote) => (
           <blockquote
             key={quote.name}
-            className={`testimonial-quote flex flex-col gap-4 rounded-[1.75rem] border border-ivory/15 bg-ivory/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:flex-row ${
+            className={`testimonial-quote artisan-card flex flex-col gap-4 rounded-[1.75rem] border border-ivory/15 bg-ivory/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:flex-row ${
               direction === "text-right" ? "md:flex-row-reverse" : ""
             }`}
             style={{ perspective: "800px", willChange: "transform, opacity" }}
           >
+            <div className="glint" aria-hidden="true" />
             <div className="flex-1">
               <div className="mb-2 flex gap-1">
                 {Array.from({ length: quote.rating }).map((_, i) => (

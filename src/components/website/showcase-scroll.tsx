@@ -65,8 +65,9 @@ export function ShowcaseScroll({ images = fallbackImages }: { images?: string[] 
         {showcaseImages.map((src, i) => (
           <div
             key={i}
-            className="clip-corner relative h-[52vh] w-[78vw] overflow-hidden border border-ivory/20 bg-ivory/5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:w-[55vw] lg:mx-8 lg:h-[64vh] lg:w-[44vh] shrink-0"
+            className="clip-corner artisan-card relative h-[52vh] w-[78vw] overflow-hidden border border-ivory/20 bg-ivory/5 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:w-[55vw] lg:mx-8 lg:h-[64vh] lg:w-[44vh] shrink-0"
           >
+            <div className="glint" aria-hidden="true" />
             <div className="absolute left-4 top-4 z-10 border border-ivory/30 bg-ivory/10 px-2 py-1 text-[10px] font-semibold tracking-[0.3em] text-ivory/70">
               {String(i + 1).padStart(2, "0")}
             </div>

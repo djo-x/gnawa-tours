@@ -111,7 +111,10 @@ export function Navigation({ sections }: { sections: NavSection[] }) {
             aria-label={`Aller à ${label}`}
             title={label}
           >
-            <span>{label}</span>
+            <span className="flex items-center gap-3">
+              <span className={`nav-dot ${activeSection === id ? "nav-dot--active" : ""}`} />
+              <span>{label}</span>
+            </span>
             <span className={`font-heading text-sm tracking-[0.08em] ${activeSection === id ? "text-gold" : "text-ivory/45"}`}>
               {String(i + 1).padStart(2, "0")}
             </span>

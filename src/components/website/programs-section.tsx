@@ -164,6 +164,8 @@ export function ProgramsSection({
       ref={sectionRef}
       className="scene-section programs-surface relative bg-transparent"
     >
+      <div className="section-ornament" aria-hidden="true" />
+      <div className="section-ornament section-ornament--bottom" aria-hidden="true" />
       {/* Title */}
       <div ref={titleRef} className="programs-title relative px-6 pb-8 pt-20 text-center md:pb-14">
         <div className="pointer-events-none absolute inset-0 flex items-start justify-center">
@@ -206,7 +208,7 @@ export function ProgramsSection({
           return (
             <article
               key={program.id}
-              className="program-card group clip-corner relative overflow-hidden border border-ivory/20 bg-ivory/5 shadow-[0_40px_120px_rgba(0,0,0,0.45)] transition-transform duration-500 hover:-translate-y-1"
+              className="program-card group artisan-card clip-corner relative overflow-hidden border border-ivory/20 bg-ivory/5 shadow-[0_40px_120px_rgba(0,0,0,0.45)] transition-transform duration-500 hover:-translate-y-1"
               style={{ willChange: "transform, opacity" }}
             >
               <div className="grid gap-8 p-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:p-10">
@@ -385,10 +387,11 @@ function ProgramGallery({
 
   return (
     <div
-      className="relative overflow-hidden rounded-2xl border border-ivory/20"
+      className="artisan-card relative overflow-hidden rounded-2xl border border-ivory/20"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      <div className="glint" aria-hidden="true" />
       <div className="absolute left-4 top-4 z-10 flex items-center gap-3 border border-ivory/25 bg-ivory/10 px-3 py-2 text-[10px] font-semibold tracking-[0.32em] text-ivory/80">
         <span>{String(index + 1).padStart(2, "0")}</span>
         <span>SAHARA</span>

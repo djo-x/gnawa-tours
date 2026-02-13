@@ -185,7 +185,10 @@ export function BookingSection({
       ref={sectionRef}
       className="scene-section booking-surface border-t border-ivory/10 px-6 py-16 text-ivory md:py-20"
     >
-      <div className="booking-content mx-auto max-w-2xl rounded-[2rem] border border-ivory/15 bg-ivory/5 p-8 shadow-[0_30px_100px_rgba(0,0,0,0.5)] md:p-10">
+      <div className="section-ornament" aria-hidden="true" />
+      <div className="section-ornament section-ornament--bottom" aria-hidden="true" />
+      <div className="booking-content artisan-card mx-auto max-w-2xl rounded-[2rem] border border-ivory/15 bg-ivory/5 p-8 shadow-[0_30px_100px_rgba(0,0,0,0.5)] md:p-10">
+        <div className="glint" aria-hidden="true" />
         <div ref={titleRef} className="mb-12 text-center">
           <p className="eyebrow mb-3">Demander une expédition</p>
           <h2 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] md:text-5xl">

@@ -312,6 +312,50 @@ body::after {
   }
 }
 
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.05);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+    opacity: 0.35;
+  }
+}
+
+@keyframes dust-float {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate3d(-2%, 1%, 0) rotate(1deg);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes glint-sweep {
+  0% {
+    transform: translateX(-40%) rotate(-2deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateX(40%) rotate(2deg);
+    opacity: 0;
+  }
+}
+
 .hero-halo {
   position: absolute;
   inset: -25% -10% -20%;
@@ -419,4 +463,128 @@ body::after {
   mix-blend-mode: screen;
   animation: gallery-sweep 14s ease-in-out infinite;
   opacity: 0.7;
+}
+
+.hero-aurora {
+  position: absolute;
+  inset: -35%;
+  background: radial-gradient(circle at 20% 25%, rgba(215, 180, 124, 0.35), transparent 58%),
+    radial-gradient(circle at 75% 55%, rgba(124, 135, 150, 0.35), transparent 60%),
+    radial-gradient(circle at 50% 80%, rgba(183, 97, 72, 0.3), transparent 65%);
+  filter: blur(40px) saturate(130%);
+  mix-blend-mode: screen;
+  animation: aurora-drift 20s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-dust {
+  position: absolute;
+  inset: -20%;
+  background-image: radial-gradient(rgba(246, 241, 231, 0.16) 1px, transparent 1px);
+  background-size: 140px 140px;
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.9), transparent 70%);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  animation: dust-float 18s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.section-ornament {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: min(60vw, 560px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(246, 241, 231, 0.25),
+    rgba(215, 180, 124, 0.65),
+    rgba(246, 241, 231, 0.25),
+    transparent
+  );
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.section-ornament::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 8px;
+  width: 8px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(215, 180, 124, 0.9), rgba(215, 180, 124, 0));
+  box-shadow: 0 0 20px rgba(215, 180, 124, 0.55);
+}
+
+.section-ornament--bottom {
+  top: auto;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+}
+
+.artisan-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.artisan-card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at 30% 30%, rgba(215, 180, 124, 0.28), transparent 60%),
+    radial-gradient(circle at 70% 60%, rgba(124, 135, 150, 0.24), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.artisan-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(246, 241, 231, 0.08);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.artisan-card:hover::before,
+.artisan-card:hover::after {
+  opacity: 1;
+}
+
+.glint {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(
+    120deg,
+    transparent 10%,
+    rgba(215, 180, 124, 0.25) 45%,
+    rgba(246, 241, 231, 0.22) 55%,
+    transparent 90%
+  );
+  mix-blend-mode: screen;
+  animation: glint-sweep 16s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.nav-dot {
+  height: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: rgba(246, 241, 231, 0.2);
+  box-shadow: 0 0 0 1px rgba(246, 241, 231, 0.18);
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-dot--active {
+  background: rgba(215, 180, 124, 0.95);
+  box-shadow: 0 0 14px rgba(215, 180, 124, 0.55);
+  transform: scale(1.4);
 }

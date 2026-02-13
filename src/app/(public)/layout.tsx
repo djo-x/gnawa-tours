@@ -7,6 +7,13 @@ type NavSection = {
   label: string;
 };
 
+type FooterSettings = {
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  address?: string | null;
+  siteName?: string | null;
+};
+
 const fallbackDynamic = [
   { id: "our-story", label: "Notre histoire" },
   { id: "why-choose-us", label: "Pourquoi nous" },
@@ -58,17 +65,57 @@ async function getNavSections(): Promise<NavSection[]> {
   }
 }
 
+function toText(value: unknown): string | null {
+  if (typeof value === "string") return value;
+  if (value == null) return null;
+  try {
+    return String(value);
+  } catch {
+    return null;
+  }
+}
+
+async function getFooterSettings(): Promise<FooterSettings> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return {};
+  }
+
+  try {
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+    const { data } = await supabase.from("site_settings").select("*");
+    const map: Record<string, unknown> = {};
+    if (data) {
+      for (const setting of data) {
+        map[setting.key] = setting.value;
+      }
+    }
+
+    return {
+      siteName: toText(map.site_name),
+      contactEmail: toText(map.contact_email),
+      contactPhone: toText(map.contact_phone),
+      address: toText(map.address),
+    };
+  } catch {
+    return {};
+  }
+}
+
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const navSections = await getNavSections();
+  const [navSections, footerSettings] = await Promise.all([
+    getNavSections(),
+    getFooterSettings(),
+  ]);
   return (
     <LenisProvider>
       <Navigation sections={navSections} />
       <main className="relative">{children}</main>
-      <Footer />
+      <Footer {...footerSettings} />
     </LenisProvider>
   );
 }

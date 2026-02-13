@@ -24,14 +24,28 @@ export function HeroSection({ hero }: HeroSectionProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const headlineWords = (hero.headline || "Atelier du désert Gnaoua")
-    .split(" ")
+  const rawHeadline = hero.headline || "Atelier du désert Gnaoua";
+  const explicitLines = rawHeadline
+    .split(/\r?\n|\s*\|\s*/g)
+    .map((line) => line.trim())
     .filter(Boolean);
-  const lineCount = headlineWords.length > 7 ? 3 : headlineWords.length > 1 ? 2 : 1;
+  const headlineWords = explicitLines.length > 1
+    ? []
+    : rawHeadline.split(" ").filter(Boolean);
+  const lineCount =
+    explicitLines.length > 1
+      ? explicitLines.length
+      : headlineWords.length <= 1
+        ? 1
+        : headlineWords.length <= 6
+          ? 2
+          : 3;
   const wordsPerLine = Math.max(1, Math.ceil(headlineWords.length / lineCount));
-  const headlineLines = Array.from({ length: lineCount }, (_, i) =>
-    headlineWords.slice(i * wordsPerLine, (i + 1) * wordsPerLine).join(" ")
-  ).filter(Boolean);
+  const headlineLines = explicitLines.length > 1
+    ? explicitLines
+    : Array.from({ length: lineCount }, (_, i) =>
+        headlineWords.slice(i * wordsPerLine, (i + 1) * wordsPerLine).join(" ")
+      ).filter(Boolean);
   const accentIndex = headlineLines.length > 1 ? 1 : 0;
 
   useEffect(() => {
@@ -206,6 +220,8 @@ export function HeroSection({ hero }: HeroSectionProps) {
 
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(11,11,13,0.92),rgba(15,15,19,0.6)_46%,rgba(11,11,13,0.92))]" />
       <div className="absolute inset-0 pointer-events-none">
+        <div className="hero-aurora" />
+        <div className="hero-dust" />
         <div ref={haloRef} className="hero-halo" />
         <div ref={beamRef} className="hero-beam" />
         <div className="hero-vignette" />
@@ -228,8 +244,9 @@ export function HeroSection({ hero }: HeroSectionProps) {
         <div className="relative grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div
             ref={frameRef}
-            className="relative border border-ivory/20 bg-ivory/[0.03] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.5)] backdrop-blur-md md:p-10"
+            className="artisan-card relative border border-ivory/20 bg-ivory/[0.03] p-6 shadow-[0_40px_120px_rgba(0,0,0,0.5)] backdrop-blur-md md:p-10"
           >
+            <div className="glint" aria-hidden="true" />
             <div className="pointer-events-none absolute right-6 top-4 select-none text-outline font-heading text-[4.5rem] uppercase tracking-[0.12em] text-ivory/20 md:text-[6rem]">
               01
             </div>
@@ -238,7 +255,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
                <span>{`Édition ${currentYear}`}</span>
             </div>
 
-            <h1 className="hero-title font-heading text-[2.8rem] leading-[0.86] font-bold uppercase md:text-[4.8rem] lg:text-[6.6rem]">
+            <h1 className="hero-title font-heading text-[2.05rem] leading-[0.95] font-bold uppercase md:text-[3.4rem] lg:text-[4.6rem]">
               {headlineLines.map((line, index) => (
                 <span key={line} className="block overflow-hidden">
                   <span
