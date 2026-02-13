@@ -199,7 +199,7 @@ async function getData() {
 }
 
 export default async function HomePage() {
-  const headerList = headers();
+  const headerList = await headers();
   const geoCountry = getGeoCountryFromHeaders(headerList);
   const pricingRegion = geoCountry === "DZ" ? "DZ" : "INTL";
   const pricingLocale = pricingRegion === "DZ" ? "fr-FR" : "en-US";
