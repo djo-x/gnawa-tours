@@ -1,0 +1,158 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CalendarCheck, Map, Layers, Eye } from "lucide-react";
+
+async function getStats() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return {
+      totalBookings: 0,
+      newBookings: 0,
+      publishedPrograms: 2,
+      visibleSections: 4,
+      recentBookings: [],
+    };
+  }
+
+  try {
+    const { createClient } = await import("@/lib/supabase/server");
+    const supabase = await createClient();
+
+    const [bookingsRes, newBookingsRes, programsRes, sectionsRes, recentRes] =
+      await Promise.all([
+        supabase.from("bookings").select("*", { count: "exact", head: true }),
+        supabase
+          .from("bookings")
+          .select("*", { count: "exact", head: true })
+          .eq("status", "new"),
+        supabase
+          .from("programs")
+          .select("*", { count: "exact", head: true })
+          .eq("is_published", true),
+        supabase
+          .from("dynamic_sections")
+          .select("*", { count: "exact", head: true })
+          .eq("is_visible", true),
+        supabase
+          .from("bookings")
+          .select("id, full_name, email, status, created_at, programs(title)")
+          .order("created_at", { ascending: false })
+          .limit(5),
+      ]);
+
+    return {
+      totalBookings: bookingsRes.count || 0,
+      newBookings: newBookingsRes.count || 0,
+      publishedPrograms: programsRes.count || 0,
+      visibleSections: sectionsRes.count || 0,
+      recentBookings: recentRes.data || [],
+    };
+  } catch {
+    return {
+      totalBookings: 0,
+      newBookings: 0,
+      publishedPrograms: 0,
+      visibleSections: 0,
+      recentBookings: [],
+    };
+  }
+}
+
+const statusColors: Record<string, string> = {
+  new: "bg-blue-100 text-blue-800",
+  contacted: "bg-yellow-100 text-yellow-800",
+  confirmed: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
+};
+
+export default async function DashboardPage() {
+  const stats = await getStats();
+
+  const statCards = [
+    {
+      title: "Total Bookings",
+      value: stats.totalBookings,
+      icon: CalendarCheck,
+    },
+    {
+      title: "New Bookings",
+      value: stats.newBookings,
+      icon: Eye,
+    },
+    {
+      title: "Published Programs",
+      value: stats.publishedPrograms,
+      icon: Map,
+    },
+    {
+      title: "Visible Sections",
+      value: stats.visibleSections,
+      icon: Layers,
+    },
+  ];
+
+  return (
+    <div>
+      <h1 className="mb-8 font-heading text-3xl font-bold">Dashboard</h1>
+
+      {/* Stats */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {statCards.map((stat) => (
+          <Card key={stat.title}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {stat.title}
+              </CardTitle>
+              <stat.icon size={18} className="text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stat.value}</div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Recent Bookings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Booking Requests</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {stats.recentBookings.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No bookings yet. They will appear here once customers submit inquiries.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {stats.recentBookings.map(
+                (booking: any) => (
+                  <div
+                    key={booking.id}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div>
+                      <p className="font-medium">{booking.full_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {booking.email}
+                        {booking.programs?.title &&
+                          ` — ${booking.programs.title}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge className={statusColors[booking.status] || ""}>
+                        {booking.status}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(booking.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
