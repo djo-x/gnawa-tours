@@ -37,7 +37,7 @@ export function BookingSection({
   const [selectedProgramId, setSelectedProgramId] = useState("");
   const { originCountry: detectedOrigin } = useRegionalPricing();
   const resolvedOrigin = originCountry || detectedOrigin;
-  const locale = pricingLocale || "en-US";
+  const locale = pricingLocale || "fr-FR";
   const selectedProgram = programs.find((program) => program.id === selectedProgramId);
   const formatDate = (value?: string | null) => {
     if (!value) return "";
@@ -55,7 +55,7 @@ export function BookingSection({
     if (startLabel && endLabel) return `${startLabel} – ${endLabel}`;
     if (startLabel) return `${startLabel}`;
     if (endLabel) return `${endLabel}`;
-    return "On request";
+    return "Sur demande";
   };
 
   useEffect(() => {
@@ -164,15 +164,15 @@ export function BookingSection({
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to submit booking");
+        throw new Error(err.error || "Échec de l’envoi de la demande");
       }
 
-      toast.success("Booking request sent! We'll be in touch soon.");
+      toast.success("Demande envoyée ! Nous vous contacterons très vite.");
       (e.target as HTMLFormElement).reset();
       setSelectedProgramId("");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Something went wrong"
+        err instanceof Error ? err.message : "Une erreur est survenue"
       );
     } finally {
       setIsSubmitting(false);
@@ -187,13 +187,13 @@ export function BookingSection({
     >
       <div className="booking-content mx-auto max-w-2xl rounded-[2rem] border border-ivory/15 bg-ivory/5 p-8 shadow-[0_30px_100px_rgba(0,0,0,0.5)] md:p-10">
         <div ref={titleRef} className="mb-12 text-center">
-          <p className="eyebrow mb-3">Request an expedition</p>
+          <p className="eyebrow mb-3">Demander une expédition</p>
           <h2 className="font-heading text-3xl font-bold uppercase tracking-[0.08em] md:text-5xl">
-            Book Your Journey
+            Réservez votre voyage
           </h2>
           <p className="mt-4 text-ivory/60">
-            Ready to explore the Sahara? Send us an inquiry and we&apos;ll craft
-            your perfect expedition.
+            Prêt à explorer le Sahara ? Envoyez-nous une demande et nous créerons
+            votre expédition idéale.
           </p>
         </div>
 
@@ -201,27 +201,27 @@ export function BookingSection({
           <div className="form-field grid gap-6">
             <div className="space-y-2">
               <Label htmlFor="full_name" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
-                Full Name *
+                Nom complet *
               </Label>
               <Input
                 id="full_name"
                 name="full_name"
                 required
-                placeholder="Your full name"
+                placeholder="Votre nom complet"
                 autoComplete="name"
                 className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
-                Email *
+                E-mail *
               </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 required
-                placeholder="your@email.com"
+                placeholder="votre@email.com"
                 autoComplete="email"
                 className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
               />
@@ -231,7 +231,7 @@ export function BookingSection({
           <div className="form-field grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="phone" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
-                Phone
+                Téléphone
               </Label>
               <Input
                 id="phone"
@@ -244,7 +244,7 @@ export function BookingSection({
             </div>
             <div className="space-y-2">
               <Label htmlFor="program_id" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
-                Program
+                Programme
               </Label>
               <Select
                 name="program_id"
@@ -252,7 +252,7 @@ export function BookingSection({
                 onValueChange={setSelectedProgramId}
               >
                 <SelectTrigger className="w-full border-ivory/20 bg-ivory/10 text-ivory">
-                  <SelectValue placeholder="Select a program" />
+                  <SelectValue placeholder="Choisir un programme" />
                 </SelectTrigger>
                 <SelectContent className="border-ivory/15 bg-[#0b0b0d]/95 text-ivory shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
                   {programs.map((p) => (
@@ -273,8 +273,8 @@ export function BookingSection({
               </Select>
               <p className="text-[10px] uppercase tracking-[0.28em] text-ivory/45">
                 {selectedProgram
-                  ? `Dates: ${getDateRange(selectedProgram.start_date, selectedProgram.end_date)}`
-                  : "Tip: click a program card to preselect"}
+                  ? `Dates : ${getDateRange(selectedProgram.start_date, selectedProgram.end_date)}`
+                  : "Astuce : cliquez sur une carte pour pré‑sélectionner"}
               </p>
             </div>
           </div>
@@ -282,7 +282,7 @@ export function BookingSection({
           <div className="form-field grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="group_size" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
-                Group Size
+                Taille du groupe
               </Label>
               <Input
                 id="group_size"
@@ -304,7 +304,7 @@ export function BookingSection({
               id="message"
               name="message"
               rows={4}
-              placeholder="Tell us about your dream desert experience..."
+              placeholder="Parlez-nous de votre expérience idéale dans le désert..."
               className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
             />
           </div>
@@ -315,7 +315,7 @@ export function BookingSection({
               disabled={isSubmitting}
               className="w-full rounded-full border border-ivory/30 bg-ivory/10 py-6 text-xs font-semibold uppercase tracking-[0.32em] text-ivory transition hover:bg-gold hover:text-midnight"
             >
-              {isSubmitting ? "Sending..." : "Send Inquiry"}
+              {isSubmitting ? "Envoi..." : "Envoyer la demande"}
             </Button>
           </div>
         </form>

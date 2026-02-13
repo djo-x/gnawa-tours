@@ -1,5 +1,5 @@
 -- ============================================================
--- Gnawa Tours: Full Setup (Schema + Seed Data)
+-- Gnaoua Tours: Full Setup (Schema + Seed Data)
 -- Paste this entire file into Supabase SQL Editor and run it
 -- ============================================================
 
@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS dynamic_sections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   section_key TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
+  nav_title TEXT NOT NULL,
   subtitle TEXT,
   content JSONB DEFAULT '{}',
   layout_type TEXT NOT NULL CHECK (layout_type IN ('text-left', 'text-right', 'centered', 'full-bleed', 'grid')),
@@ -164,6 +165,34 @@ CREATE POLICY "Auth full access media" ON media FOR ALL USING (auth.role() = 'au
 CREATE POLICY "Auth full access settings" ON site_settings FOR ALL USING (auth.role() = 'authenticated');
 
 -- ========================
+-- 3B. STORAGE (MEDIA BUCKET)
+-- ========================
+
+-- Create bucket (public)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('gnawa-media', 'gnawa-media', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies (safe re-run)
+DROP POLICY IF EXISTS "Public can read gnawa media" ON storage.objects;
+DROP POLICY IF EXISTS "Auth can upload gnawa media" ON storage.objects;
+DROP POLICY IF EXISTS "Auth can delete gnawa media" ON storage.objects;
+
+CREATE POLICY "Public can read gnawa media"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'gnawa-media');
+
+CREATE POLICY "Auth can upload gnawa media"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'gnawa-media');
+
+CREATE POLICY "Auth can delete gnawa media"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'gnawa-media');
+
+-- ========================
 -- 4. INDEXES
 -- ========================
 
@@ -184,9 +213,9 @@ TRUNCATE programs CASCADE;
 -- Hero
 INSERT INTO hero_settings (headline, subheadline, cta_text, background_image, overlay_opacity)
 VALUES (
-  'Discover the Algerian Sahara',
-  'Journey through ancient landscapes where towering sandstone arches meet endless golden dunes',
-  'Begin Your Adventure',
+  'Découvrir le Sahara algérien',
+  'Voyagez à travers des paysages ancestraux où les arches de grès se dressent au-dessus des dunes dorées sans fin',
+  'Commencer l’aventure',
   'https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg?w=1920&q=80',
   0.45
 );
@@ -195,43 +224,43 @@ VALUES (
 INSERT INTO programs (title, slug, description, duration, start_date, end_date, price_eur, price_dzd, difficulty, highlights, itinerary, cover_image, display_order, is_published)
 VALUES
 (
-  'Tadrart Rouge Expedition',
+  'Expédition Tadrart Rouge',
   'tadrart-rouge-expedition',
-  'Immerse yourself in the breathtaking red rock formations of Tadrart Rouge, one of the most spectacular landscapes on Earth. This 5-day expedition takes you through ancient canyons, past prehistoric rock art, and across sweeping dune fields painted in shades of amber and crimson.',
-  '5 days / 4 nights',
+  'Immergez-vous dans les formations rocheuses rougeoyantes du Tadrart Rouge, l’un des paysages les plus spectaculaires au monde. Cette expédition de 5 jours vous mène à travers des canyons anciens, des peintures rupestres préhistoriques et de vastes mers de dunes teintées d’ambre et de carmin.',
+  '5 jours / 4 nuits',
   '2026-10-05',
   '2026-10-09',
   1200.00,
   180000.00,
   'moderate',
-  ARRAY['Red sandstone arches of Tadrart', 'Prehistoric Tassili rock art', 'Sunset camel trek across Erg Admer', 'Traditional Tuareg camp experience', 'Star-gazing in zero light pollution'],
+  ARRAY['Arches de grès rouge du Tadrart', 'Art rupestre préhistorique du Tassili', 'Balade à dos de chameau au coucher du soleil dans l’Erg Admer', 'Expérience de campement touareg traditionnel', 'Observation des étoiles sans pollution lumineuse'],
   '[
-    {"day": 1, "title": "Arrival in Djanet", "description": "Arrive at Djanet airport, transfer to hotel. Evening briefing and welcome dinner with traditional Tuareg music."},
-    {"day": 2, "title": "Into the Tadrart", "description": "Depart by 4x4 into the heart of Tadrart Rouge. Visit the famous rock arches and explore hidden canyons. Camp under the stars."},
-    {"day": 3, "title": "Rock Art & Dunes", "description": "Morning visit to prehistoric rock paintings. Afternoon camel trek through Erg Admer dunes. Sunset photography session."},
-    {"day": 4, "title": "Deep Desert", "description": "Full day exploring remote valleys and seasonal guelta pools. Traditional lunch prepared by guides. Night camp with Tuareg storytelling."},
-    {"day": 5, "title": "Return to Djanet", "description": "Morning drive through varied landscapes back to Djanet. Farewell lunch and departure."}
+    {"day": 1, "title": "Arrivée à Djanet", "description": "Arrivée à l’aéroport de Djanet, transfert à l’hôtel. Briefing du soir et dîner de bienvenue avec musique touareg traditionnelle."},
+    {"day": 2, "title": "Cap sur le Tadrart", "description": "Départ en 4x4 au cœur du Tadrart Rouge. Visite des arches emblématiques et exploration de canyons secrets. Bivouac sous les étoiles."},
+    {"day": 3, "title": "Art rupestre & dunes", "description": "Visite matinale des peintures préhistoriques. Balade en chameau dans l’Erg Admer. Session photo au coucher du soleil."},
+    {"day": 4, "title": "Désert profond", "description": "Journée complète à travers des vallées reculées et des gueltas saisonnières. Déjeuner traditionnel préparé par les guides. Veillée au camp avec récits touaregs."},
+    {"day": 5, "title": "Retour à Djanet", "description": "Trajet matinal à travers des paysages variés jusqu’à Djanet. Déjeuner d’au revoir et départ."}
   ]'::jsonb,
   'https://images.pexels.com/photos/4553618/pexels-photo-4553618.jpeg?w=1920&q=80',
   1,
   true
 ),
 (
-  'Ihrir Desert Oasis Adventure',
+  'Aventure oasis d’Ihrir',
   'ihrir-desert-oasis',
-  'Discover the hidden gem of Ihrir, a stunning desert oasis nestled within the rugged Tassili n''Ajjer plateau. This 4-day adventure combines dramatic canyon landscapes with the surreal beauty of permanent lakes surrounded by nothing but sand and rock.',
-  '4 days / 3 nights',
+  'Découvrez le joyau caché d’Ihrir, une oasis désertique spectaculaire nichée au cœur du plateau rocheux du Tassili n’Ajjer. Cette aventure de 4 jours combine des canyons grandioses et la beauté irréelle de lacs permanents entourés de sable et de roche.',
+  '4 jours / 3 nuits',
   '2026-11-14',
   '2026-11-17',
   950.00,
   145000.00,
   'moderate',
-  ARRAY['Ihrir permanent desert lakes', 'Tassili n''Ajjer UNESCO World Heritage', 'Canyon hiking adventures', 'Desert wildlife spotting', 'Authentic nomadic cuisine'],
+  ARRAY['Lacs désertiques permanents d’Ihrir', 'Tassili n’Ajjer classé au patrimoine mondial de l’UNESCO', 'Randonnées dans les canyons', 'Observation de la faune du désert', 'Cuisine nomade authentique'],
   '[
-    {"day": 1, "title": "Djanet to Illizi", "description": "Scenic drive from Djanet through the Tassili plateau to Illizi. Check in and explore the local market."},
-    {"day": 2, "title": "Journey to Ihrir", "description": "4x4 expedition to the remarkable Ihrir oasis. Hike through dramatic canyons to discover hidden lakes. Camp at the oasis."},
-    {"day": 3, "title": "Oasis Exploration", "description": "Full day exploring the surrounding rock formations, swimming in crystal-clear guelta pools, and discovering ancient engravings."},
-    {"day": 4, "title": "Return Journey", "description": "Morning departure back to Illizi/Djanet. Stop at panoramic viewpoints along the way. Farewell dinner."}
+    {"day": 1, "title": "Djanet à Illizi", "description": "Route panoramique de Djanet à Illizi à travers le plateau du Tassili. Installation et découverte du marché local."},
+    {"day": 2, "title": "Vers Ihrir", "description": "Expédition en 4x4 vers l’oasis d’Ihrir. Randonnée dans des canyons spectaculaires pour découvrir des lacs cachés. Nuit au camp de l’oasis."},
+    {"day": 3, "title": "Exploration de l’oasis", "description": "Journée complète à explorer les formations rocheuses, nager dans les gueltas cristallines et découvrir des gravures anciennes."},
+    {"day": 4, "title": "Retour", "description": "Départ matinal vers Illizi/Djanet. Arrêt aux points de vue panoramiques. Dîner d’au revoir."}
   ]'::jsonb,
   'https://images.pexels.com/photos/1703314/pexels-photo-1703314.jpeg?w=1920&q=80',
   2,
@@ -239,13 +268,14 @@ VALUES
 );
 
 -- Dynamic Sections
-INSERT INTO dynamic_sections (section_key, title, subtitle, content, layout_type, background_image, is_visible, display_order)
+INSERT INTO dynamic_sections (section_key, title, nav_title, subtitle, content, layout_type, background_image, is_visible, display_order)
 VALUES
 (
   'our-story',
-  'Our Story',
-  'Born from a passion for the Sahara',
-  '{"text": "Gnawa Tours was founded by seasoned Saharan guides who grew up in the shadows of the Tassili mountains. With over two decades of experience leading expeditions across the Algerian desert, we offer authentic, safe, and unforgettable journeys into one of the last true wildernesses on Earth. Our name pays homage to the rich Gnawa musical tradition that echoes through the desert nights.", "image": "https://images.pexels.com/photos/4577791/pexels-photo-4577791.jpeg?w=1200&q=80"}'::jsonb,
+  'Notre histoire',
+  'Notre histoire',
+  'Née d’une passion pour le Sahara',
+  '{"text": "Gnaoua Tours a été fondée par des guides sahariens chevronnés qui ont grandi à l’ombre des montagnes du Tassili. Forts de plus de vingt ans d’expéditions à travers le désert algérien, nous proposons des voyages authentiques, sûrs et inoubliables au cœur de l’un des derniers grands espaces sauvages. Notre nom rend hommage à la riche tradition musicale gnawa qui résonne dans les nuits du désert.", "image": "https://images.pexels.com/photos/4577791/pexels-photo-4577791.jpeg?w=1200&q=80"}'::jsonb,
   'centered',
   NULL,
   true,
@@ -253,13 +283,14 @@ VALUES
 ),
 (
   'why-choose-us',
-  'Why Choose Us',
-  'What makes Gnawa Tours different',
+  'Pourquoi nous choisir',
+  'Pourquoi nous',
+  'Ce qui rend Gnaoua Tours différent',
   '{"cards": [
-    {"icon": "compass", "title": "Expert Local Guides", "description": "Our Tuareg guides have lived in the Sahara their entire lives, offering unparalleled knowledge of the terrain, culture, and hidden gems."},
-    {"icon": "shield", "title": "Safety First", "description": "Every expedition is equipped with satellite communication, first aid, and thoroughly maintained vehicles for your peace of mind."},
-    {"icon": "star", "title": "Small Groups", "description": "We keep groups intimate (max 8 travelers) ensuring a personal, immersive experience far from the crowds."},
-    {"icon": "heart", "title": "Sustainable Travel", "description": "We practice leave-no-trace principles and invest directly in local communities, preserving the desert for future generations."}
+    {"icon": "compass", "title": "Guides locaux experts", "description": "Nos guides touaregs vivent dans le Sahara depuis toujours, offrant une connaissance inégalée du terrain, de la culture et des lieux secrets."},
+    {"icon": "shield", "title": "Sécurité avant tout", "description": "Chaque expédition est équipée de communications satellite, de premiers secours et de véhicules parfaitement entretenus."},
+    {"icon": "star", "title": "Petits groupes", "description": "Nous limitons les groupes (max. 8 voyageurs) pour une expérience intime et immersive, loin des foules."},
+    {"icon": "heart", "title": "Voyage durable", "description": "Nous appliquons le principe “leave no trace” et investissons directement dans les communautés locales, pour préserver le désert."}
   ]}'::jsonb,
   'grid',
   NULL,
@@ -268,8 +299,9 @@ VALUES
 ),
 (
   'the-desert',
-  'The Desert Awaits',
-  'A glimpse into the extraordinary',
+  'Le désert vous attend',
+  'Galerie',
+  'Un aperçu de l’extraordinaire',
   '{"images": [
     "https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=800&q=80",
     "https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg?w=800&q=80",
@@ -277,7 +309,7 @@ VALUES
     "https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=800&q=80",
     "https://images.pexels.com/photos/2832040/pexels-photo-2832040.jpeg?w=800&q=80",
     "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=800&q=80"
-  ], "text": "From the towering sandstone forests of Tadrart to the crystalline lakes of Ihrir, the Algerian Sahara is a world of contrasts and wonder."}'::jsonb,
+  ], "text": "Des forêts de grès du Tadrart aux lacs cristallins d’Ihrir, le Sahara algérien est un monde de contrastes et d’émerveillement."}'::jsonb,
   'full-bleed',
   'https://images.pexels.com/photos/3876407/pexels-photo-3876407.jpeg?w=1920&q=80',
   true,
@@ -285,12 +317,13 @@ VALUES
 ),
 (
   'testimonials',
-  'What Travelers Say',
-  'Stories from the dunes',
+  'Ce que disent nos voyageurs',
+  'Avis',
+  'Récits venus des dunes',
   '{"quotes": [
-    {"name": "Marie Laurent", "location": "Paris, France", "text": "The most extraordinary travel experience of my life. The silence of the desert, the kindness of our guides, the star-filled nights — simply unforgettable.", "rating": 5},
-    {"name": "Thomas Müller", "location": "Berlin, Germany", "text": "Gnawa Tours exceeded every expectation. The Tadrart Rouge landscape is like being on another planet. Professional, authentic, and magical.", "rating": 5},
-    {"name": "Sarah Chen", "location": "London, UK", "text": "I have traveled extensively but nothing compares to this. The desert has a way of resetting your soul. Thank you, Gnawa Tours, for an incredible journey.", "rating": 5}
+    {"name": "Marie Laurent", "location": "Paris, France", "text": "L’expérience de voyage la plus extraordinaire de ma vie. Le silence du désert, la gentillesse de nos guides, les nuits étoilées — inoubliable.", "rating": 5},
+    {"name": "Thomas Müller", "location": "Berlin, Allemagne", "text": "Gnaoua Tours a dépassé toutes mes attentes. Le Tadrart Rouge donne l’impression d’être sur une autre planète. Professionnel, authentique et magique.", "rating": 5},
+    {"name": "Sarah Chen", "location": "Londres, Royaume‑Uni", "text": "J’ai beaucoup voyagé mais rien n’égale cela. Le désert a le pouvoir de réinitialiser l’âme. Merci, Gnaoua Tours, pour ce voyage incroyable.", "rating": 5}
   ]}'::jsonb,
   'text-left',
   NULL,
@@ -301,9 +334,10 @@ VALUES
 -- Site Settings
 INSERT INTO site_settings (key, value)
 VALUES
-('site_name', '"Gnawa Tours"'::jsonb),
+('site_name', '"Gnaoua Tours"'::jsonb),
 ('contact_email', '"info@gnawatours.com"'::jsonb),
 ('contact_phone', '"+213 555 123 456"'::jsonb),
-('address', '"Djanet, Illizi Province, Algeria"'::jsonb),
+('address', '"Djanet, wilaya d’Illizi, Algérie"'::jsonb),
+('showcase_images', '["https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=800&q=80","https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg?w=800&q=80","https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?w=800&q=80","https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=800&q=80","https://images.pexels.com/photos/2832040/pexels-photo-2832040.jpeg?w=800&q=80"]'::jsonb),
 ('social_links', '{"instagram": "https://instagram.com/gnawatours", "facebook": "https://facebook.com/gnawatours", "youtube": "https://youtube.com/@gnawatours"}'::jsonb),
-('seo', '{"title": "Gnawa Tours - Saharan Desert Expeditions", "description": "Premium travel agency specializing in Algerian Sahara expeditions.", "keywords": ["sahara", "algeria", "desert", "expedition", "djanet", "tadrart", "ihrir"]}'::jsonb);
+('seo', '{"title": "Gnaoua Tours - Expéditions dans le Sahara", "description": "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien.", "keywords": ["sahara", "algérie", "désert", "expédition", "djanet", "tadrart", "ihrir"]}'::jsonb);

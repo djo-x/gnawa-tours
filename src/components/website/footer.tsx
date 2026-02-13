@@ -15,10 +15,10 @@ const socialLinks = [
 ];
 
 const quickLinks = [
-  { label: "Programs", href: "#programs" },
-  { label: "Our Story", href: "#our-story" },
-  { label: "Gallery", href: "#the-desert" },
-  { label: "Book Now", href: "#booking" },
+  { label: "Programmes", href: "#programs" },
+  { label: "Notre histoire", href: "#our-story" },
+  { label: "Galerie", href: "#the-desert" },
+  { label: "Réserver", href: "#booking" },
 ];
 
 export function Footer() {
@@ -61,17 +61,17 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-3">
           {/* Brand */}
           <div className="footer-col rounded-[1.75rem] border border-ivory/12 bg-ivory/5 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-            <h3 className="font-heading text-2xl uppercase tracking-[0.12em] text-ivory">Gnawa Tours</h3>
+            <h3 className="font-heading text-2xl uppercase tracking-[0.12em] text-ivory">Gnaoua Tours</h3>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/60">
-              Premium Saharan desert expeditions in Algeria. Discover the magic of Djanet,
-              Tadrart Rouge, and Ihrir.
+              Expéditions sahariennes premium en Algérie. Découvrez la magie de Djanet,
+              Tadrart Rouge et Ihrir.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="footer-col rounded-[1.75rem] border border-ivory/12 bg-ivory/5 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
             <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.4em] text-ivory/60">
-              Quick Links
+              Liens rapides
             </h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
@@ -103,7 +103,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-sm text-ivory/70">
                 <MapPin size={14} className="text-gold" />
-                Djanet, Illizi Province, Algeria
+                Djanet, wilaya d’Illizi, Algérie
               </li>
             </ul>
             <div className="mt-6 flex gap-4">
@@ -126,7 +126,7 @@ export function Footer() {
         <Separator className="my-8 bg-ivory/10" />
 
         <p className="text-center text-[10px] uppercase tracking-[0.32em] text-ivory/40">
-          &copy; {new Date().getFullYear()} Gnawa Tours. All rights reserved.
+          &copy; {new Date().getFullYear()} Gnaoua Tours. Tous droits réservés.
         </p>
       </div>
     </footer>

@@ -24,6 +24,12 @@ export default function ProgramsPage() {
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editProgram, setEditProgram] = useState<Program | null>(null);
+  const difficultyLabels: Record<Program["difficulty"], string> = {
+    easy: "Facile",
+    moderate: "Modéré",
+    challenging: "Difficile",
+    expert: "Expert",
+  };
   const formatCurrency = (value: number | null | undefined, currency: "EUR" | "DZD") => {
     if (value === null || value === undefined || Number.isNaN(value) || value <= 0) {
       return "—";
@@ -50,7 +56,6 @@ export default function ProgramsPage() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPrograms();
   }, [fetchPrograms]);
 
@@ -59,12 +64,12 @@ export default function ProgramsPage() {
   );
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this program?")) return;
+    if (!confirm("Supprimer ce programme ?")) return;
     const result = await deleteProgram(id);
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Program deleted");
+      toast.success("Programme supprimé");
       fetchPrograms();
     }
   }
@@ -81,20 +86,20 @@ export default function ProgramsPage() {
   return (
     <div className="space-y-5">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Programs</h1>
+        <h1 className="font-heading text-4xl font-bold">Programmes</h1>
         <Button
           onClick={() => {
             setEditProgram(null);
             setFormOpen(true);
           }}
         >
-          <Plus size={16} className="mr-1" /> Add Program
+          <Plus size={16} className="mr-1" /> Ajouter un programme
         </Button>
       </div>
 
       <div className="mb-4">
         <Input
-          placeholder="Search programs..."
+          placeholder="Rechercher des programmes..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -105,14 +110,14 @@ export default function ProgramsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Start</TableHead>
-              <TableHead>End</TableHead>
-              <TableHead>Price (EUR)</TableHead>
-              <TableHead>Price (DZD)</TableHead>
-              <TableHead>Difficulty</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Titre</TableHead>
+              <TableHead>Durée</TableHead>
+              <TableHead>Début</TableHead>
+              <TableHead>Fin</TableHead>
+              <TableHead>Prix (EUR)</TableHead>
+              <TableHead>Prix (DZD)</TableHead>
+              <TableHead>Difficulté</TableHead>
+              <TableHead>Statut</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -121,8 +126,8 @@ export default function ProgramsPage() {
               <TableRow>
                 <TableCell colSpan={9} className="text-center text-muted-foreground">
                   {programs.length === 0
-                    ? "No programs yet. Connect Supabase and add programs."
-                    : "No matching programs."}
+                    ? "Aucun programme pour le moment. Connectez Supabase et ajoutez des programmes."
+                    : "Aucun programme correspondant."}
                 </TableCell>
               </TableRow>
             ) : (
@@ -135,13 +140,15 @@ export default function ProgramsPage() {
                   <TableCell>{formatCurrency(program.price_eur, "EUR")}</TableCell>
                   <TableCell>{formatCurrency(program.price_dzd, "DZD")}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{program.difficulty}</Badge>
+                    <Badge variant="secondary">
+                      {difficultyLabels[program.difficulty] || program.difficulty}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={program.is_published ? "default" : "outline"}
                     >
-                      {program.is_published ? "Published" : "Draft"}
+                      {program.is_published ? "Publié" : "Brouillon"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -150,7 +157,7 @@ export default function ProgramsPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleToggle(program.id, program.is_published)}
-                        title={program.is_published ? "Unpublish" : "Publish"}
+                        title={program.is_published ? "Dépublier" : "Publier"}
                       >
                         {program.is_published ? <EyeOff size={16} /> : <Eye size={16} />}
                       </Button>

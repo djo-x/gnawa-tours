@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const bookingSchema = z.object({
-  full_name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
+  full_name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  email: z.string().email("Adresse e‑mail invalide"),
   phone: z.string().optional().default(""),
   program_id: z.string().optional().default(""),
   group_size: z.number().int().min(1).max(20).default(1),
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       );
     }
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erreur interne du serveur" },
       { status: 500 }
     );
   }

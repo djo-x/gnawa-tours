@@ -57,6 +57,12 @@ const statusColors: Record<string, string> = {
   confirmed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
 };
+const statusLabels: Record<string, string> = {
+  new: "Nouveau",
+  contacted: "Contacté",
+  confirmed: "Confirmé",
+  cancelled: "Annulé",
+};
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>(emptyStats);
@@ -80,7 +86,7 @@ export default function DashboardPage() {
         if (active) {
           setStats(emptyStats);
           setLoading(false);
-          setErrorMessage("Supabase environment variables are missing.");
+          setErrorMessage("Les variables d’environnement Supabase sont manquantes.");
         }
         return;
       }
@@ -93,7 +99,7 @@ export default function DashboardPage() {
         if (!session) {
           if (active) {
             setLoading(false);
-            setErrorMessage("Session not ready. Please refresh or sign in again.");
+            setErrorMessage("Session non prête. Veuillez actualiser ou vous reconnecter.");
           }
           return;
         }
@@ -271,7 +277,7 @@ export default function DashboardPage() {
               ? err
               : err && typeof err === "object" && "message" in err
                 ? String((err as { message: unknown }).message)
-                : "Unable to load dashboard metrics.";
+                : "Impossible de charger les indicateurs du tableau de bord.";
           setErrorMessage(errorText);
           console.error("Dashboard metrics error:", err);
         }
@@ -296,14 +302,14 @@ export default function DashboardPage() {
     return (
       <div className="space-y-8">
         <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-gold/80">Operations</p>
-          <h1 className="font-heading text-4xl font-bold">Dashboard</h1>
+          <p className="text-xs uppercase tracking-[0.22em] text-gold/80">Opérations</p>
+          <h1 className="font-heading text-4xl font-bold">Tableau de bord</h1>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="glass-panel">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-muted-foreground">Loading</CardTitle>
+                <CardTitle className="text-sm text-muted-foreground">Chargement</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-7 w-20 rounded-md bg-muted/40" />
@@ -316,28 +322,28 @@ export default function DashboardPage() {
   }
   const overviewCards = [
     {
-      title: "Total Bookings",
+      title: "Total des réservations",
       value: loading ? "—" : stats.totalBookings,
-      meta: `${stats.bookingsLast7} in last 7 days`,
+      meta: `${stats.bookingsLast7} sur les 7 derniers jours`,
       icon: CalendarCheck,
     },
     {
-      title: "New Requests",
+      title: "Nouvelles demandes",
       value: loading ? "—" : stats.newBookings,
-      meta: `${stats.bookingsLast30} in last 30 days`,
+      meta: `${stats.bookingsLast30} sur les 30 derniers jours`,
       icon: Eye,
     },
     {
-      title: "Confirmed",
+      title: "Confirmées",
       value: loading ? "—" : stats.confirmedBookings,
-      meta: `${stats.conversionRate.toFixed(0)}% conversion`,
+      meta: `${stats.conversionRate.toFixed(0)}% de conversion`,
       icon: MapIcon,
     },
     {
-      title: "Pipeline Value",
+      title: "Valeur du pipeline",
       value: loading ? "—" : formatCurrency(stats.pipelineValueEur, "EUR"),
       subvalue: loading ? null : formatCurrency(stats.pipelineValueDzd, "DZD"),
-      meta: "Excludes cancelled",
+      meta: "Hors annulées",
       icon: Layers,
     },
   ];
@@ -352,15 +358,15 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-xs uppercase tracking-[0.22em] text-gold/80">Operations</p>
-        <h1 className="font-heading text-4xl font-bold">Dashboard</h1>
+        <p className="text-xs uppercase tracking-[0.22em] text-gold/80">Opérations</p>
+        <h1 className="font-heading text-4xl font-bold">Tableau de bord</h1>
       </div>
 
       {/* Stats */}
       {errorMessage && (
         <Card className="glass-panel border border-destructive/30">
           <CardHeader>
-            <CardTitle className="text-sm text-destructive">Dashboard Notice</CardTitle>
+            <CardTitle className="text-sm text-destructive">Alerte tableau de bord</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{errorMessage}</CardContent>
         </Card>
@@ -391,12 +397,12 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Revenue Snapshot</CardTitle>
+            <CardTitle>Aperçu des revenus</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Confirmed Revenue
+                Revenu confirmé
               </p>
               <p className="mt-2 text-2xl font-semibold">
                 {formatCurrency(stats.confirmedValueEur, "EUR")}
@@ -407,7 +413,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Cancelled
+                Annulées
               </p>
               <p className="mt-2 text-lg font-semibold">{stats.cancelledBookings}</p>
             </div>
@@ -415,12 +421,12 @@ export default function DashboardPage() {
         </Card>
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Booking Quality</CardTitle>
+            <CardTitle>Qualité des réservations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Average Group Size
+                Taille moyenne du groupe
               </p>
               <p className="mt-2 text-2xl font-semibold">
                 {stats.averageGroup.toFixed(1)}
@@ -428,7 +434,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Conversion Rate
+                Taux de conversion
               </p>
               <p className="mt-2 text-lg font-semibold">
                 {stats.conversionRate.toFixed(0)}%
@@ -438,18 +444,18 @@ export default function DashboardPage() {
         </Card>
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Inventory</CardTitle>
+            <CardTitle>Inventaire</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Published Programs
+                Programmes publiés
               </p>
               <p className="mt-2 text-2xl font-semibold">{stats.publishedPrograms}</p>
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Visible Sections
+                Sections visibles
               </p>
               <p className="mt-2 text-lg font-semibold">{stats.visibleSections}</p>
             </div>
@@ -460,7 +466,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Bookings (Last 14 Days)</CardTitle>
+          <CardTitle>Réservations (14 derniers jours)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">
@@ -486,7 +492,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="relative flex h-full items-center justify-center text-xs text-muted-foreground">
-                  No bookings in the last 14 days.
+                  Aucune réservation sur les 14 derniers jours.
                 </div>
               )}
             </div>
@@ -498,7 +504,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Confirmed Revenue (EUR)</CardTitle>
+          <CardTitle>Revenu confirmé (EUR)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">
@@ -525,7 +531,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="relative flex h-full items-center justify-center text-xs text-muted-foreground">
-                  No confirmed revenue yet.
+                  Aucun revenu confirmé pour le moment.
                 </div>
               )}
             </div>
@@ -537,7 +543,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="glass-panel">
           <CardHeader>
-            <CardTitle>Confirmed Revenue (DZD)</CardTitle>
+          <CardTitle>Revenu confirmé (DZD)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">
@@ -564,7 +570,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="relative flex h-full items-center justify-center text-xs text-muted-foreground">
-                  No confirmed revenue yet.
+                  Aucun revenu confirmé pour le moment.
                 </div>
               )}
             </div>
@@ -579,12 +585,12 @@ export default function DashboardPage() {
       {/* Recent Bookings */}
       <Card className="glass-panel">
         <CardHeader>
-          <CardTitle>Recent Booking Requests</CardTitle>
+          <CardTitle>Dernières demandes de réservation</CardTitle>
         </CardHeader>
         <CardContent>
           {stats.recentBookings.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No bookings yet. They will appear here once customers submit inquiries.
+              Aucune réservation pour le moment. Elles apparaîtront ici dès réception des demandes.
             </p>
           ) : (
             <div className="space-y-3">
@@ -611,13 +617,13 @@ export default function DashboardPage() {
                       </p>
                       {value > 0 && (
                         <p className="mt-1 text-xs text-muted-foreground">
-                          Est. value: {formatCurrency(value, useDzd ? "DZD" : "EUR")}
+                          Valeur estimée : {formatCurrency(value, useDzd ? "DZD" : "EUR")}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
                       <Badge className={statusColors[booking.status] || ""}>
-                        {booking.status}
+                        {statusLabels[booking.status] || booking.status}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         {new Date(booking.created_at).toLocaleDateString()}

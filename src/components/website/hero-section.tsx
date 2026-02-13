@@ -15,6 +15,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ hero }: HeroSectionProps) {
+  const currentYear = new Date().getFullYear();
   const sectionRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const strataRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const headlineWords = (hero.headline || "Gnawa Desert Atelier")
+  const headlineWords = (hero.headline || "Atelier du désert Gnaoua")
     .split(" ")
     .filter(Boolean);
   const lineCount = headlineWords.length > 7 ? 3 : headlineWords.length > 1 ? 2 : 1;
@@ -233,8 +234,8 @@ export function HeroSection({ hero }: HeroSectionProps) {
               01
             </div>
             <div className="mb-6 flex items-center justify-between text-[10px] uppercase tracking-[0.38em] text-ivory/60 md:text-xs">
-              <span data-hero-kicker>Gnawa Desert Atelier</span>
-              <span>Edition 2026</span>
+              <span data-hero-kicker>Gnaoua Tours</span>
+               <span>{`Édition ${currentYear}`}</span>
             </div>
 
             <h1 className="hero-title font-heading text-[2.8rem] leading-[0.86] font-bold uppercase md:text-[4.8rem] lg:text-[6.6rem]">
@@ -258,7 +259,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
               </p>
               <div className="flex flex-col items-start gap-4 md:items-end">
                 <p className="text-[10px] uppercase tracking-[0.38em] text-ivory/50">
-                  Djanet / Tadrart / Tikoubaouine
+                  Djanet / Tadrart / Ihrir
                 </p>
                 <Button
                   data-hero-cta
@@ -279,10 +280,11 @@ export function HeroSection({ hero }: HeroSectionProps) {
               </p>
             </div>
             <div className="space-y-4">
-              <p className="eyebrow">Latitude 24°56&apos; / Longitude 9°29&apos;</p>
+              <p className="eyebrow">Latitude 24°4&apos;17.476&quot;</p> 
+              <p className="eyebrow">Longitude 9°36&apos;56.104&quot;</p>
               <div className="hairline w-32" />
               <p className="text-sm uppercase tracking-[0.32em] text-ivory/60">
-                Wind, Stone, Silence
+                Vent, pierre, silence
               </p>
             </div>
             <div className="grid w-full max-w-xs gap-4 text-[11px] uppercase tracking-[0.28em] text-ivory/55">
@@ -291,12 +293,8 @@ export function HeroSection({ hero }: HeroSectionProps) {
                 <span className="text-ivory/75">1,050m</span>
               </div>
               <div className="flex items-center justify-between border-b border-ivory/10 pb-2">
-                <span>Season</span>
-                <span className="text-ivory/75">Sep - Apr</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-ivory/10 pb-2">
-                <span>Group</span>
-                <span className="text-ivory/75">Max 8</span>
+                <span>Saison</span>
+                <span className="text-ivory/75">Sep - Avr</span>
               </div>
             </div>
           </div>
@@ -309,7 +307,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
         style={{ visibility: "hidden" }}
       >
         <div className="flex flex-col items-center gap-3 text-ivory/60">
-          <span className="text-[10px] uppercase tracking-[0.4em]">Scroll</span>
+          <span className="text-[10px] uppercase tracking-[0.4em]">Défilez</span>
           <div className="h-10 w-px bg-ivory/30" />
           <ChevronDown className="h-6 w-6 text-gold/80" />
         </div>

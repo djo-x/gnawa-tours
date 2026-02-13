@@ -15,6 +15,13 @@ export default function SectionsPage() {
   const [sections, setSections] = useState<DynamicSection[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editSection, setEditSection] = useState<DynamicSection | null>(null);
+  const layoutLabels: Record<string, string> = {
+    "text-left": "Texte à gauche",
+    "text-right": "Texte à droite",
+    centered: "Centré",
+    "full-bleed": "Pleine largeur",
+    grid: "Grille",
+  };
 
   const fetchSections = useCallback(async () => {
     const supabase = createClient();
@@ -26,17 +33,16 @@ export default function SectionsPage() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSections();
   }, [fetchSections]);
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this section?")) return;
+    if (!confirm("Supprimer cette section ?")) return;
     const result = await deleteSection(id);
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Section deleted");
+      toast.success("Section supprimée");
       fetchSections();
     }
   }
@@ -60,13 +66,13 @@ export default function SectionsPage() {
             setFormOpen(true);
           }}
         >
-          <Plus size={16} className="mr-1" /> Add Section
+          <Plus size={16} className="mr-1" /> Ajouter une section
         </Button>
       </div>
 
       {sections.length === 0 ? (
         <p className="text-muted-foreground">
-          No sections yet. Connect Supabase and add sections.
+          Aucune section pour le moment. Connectez Supabase et ajoutez des sections.
         </p>
       ) : (
         <div className="grid gap-4">
@@ -75,9 +81,11 @@ export default function SectionsPage() {
               <CardHeader className="flex flex-row items-center justify-between py-3">
                 <div className="flex items-center gap-3">
                   <CardTitle className="text-base">{section.title}</CardTitle>
-                  <Badge variant="secondary">{section.layout_type}</Badge>
+                  <Badge variant="secondary">
+                    {layoutLabels[section.layout_type] || section.layout_type}
+                  </Badge>
                   <Badge variant={section.is_visible ? "default" : "outline"}>
-                    {section.is_visible ? "Visible" : "Hidden"}
+                    {section.is_visible ? "Visible" : "Masquée"}
                   </Badge>
                 </div>
                 <div className="flex gap-1">
@@ -109,7 +117,7 @@ export default function SectionsPage() {
               </CardHeader>
               <CardContent className="py-2">
                 <p className="text-sm text-muted-foreground">
-                  Key: {section.section_key} | Order: {section.display_order}
+                  Nav : {section.nav_title} | Clé : {section.section_key} | Ordre : {section.display_order}
                   {section.subtitle && ` | ${section.subtitle}`}
                 </p>
               </CardContent>

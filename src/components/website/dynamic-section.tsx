@@ -15,20 +15,15 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   heart: Heart,
 };
 
-const chapterMap: Record<string, string> = {
-  "our-story": "03",
-  "why-choose-us": "04",
-  "the-desert": "05",
-  testimonials: "06",
-};
-
 interface DynamicSectionProps {
   section: DynamicSectionType;
 }
 
 export function DynamicSection({ section }: DynamicSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const chapter = chapterMap[section.section_key];
+  const chapter = Number.isFinite(section.display_order)
+    ? String(section.display_order + 2).padStart(2, "0")
+    : null;
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -347,6 +342,7 @@ function CenteredContent({
   content: Record<string, unknown>;
 }) {
   const text = content.text as string;
+  const image = typeof content.image === "string" ? content.image : "";
   const words = text ? text.split(/\s+/) : [];
 
   return (
@@ -358,6 +354,14 @@ function CenteredContent({
           </span>
         ))}
       </p>
+      {image && (
+        <div className="mt-10">
+          <div
+            className="centered-image mx-auto aspect-video max-w-2xl rounded-xl bg-cover bg-center shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+            style={{ backgroundImage: `url(${image})` }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -469,7 +473,7 @@ function FullBleedContent({
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(140deg,rgba(11,11,13,0.72),rgba(11,11,13,0.2)_45%,rgba(11,11,13,0.78))]" />
 
             <div className="pointer-events-none absolute left-6 top-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.36em] text-ivory/70">
-              <span>Desert Archive</span>
+              <span>Archives du désert</span>
               <span className="h-px w-14 bg-ivory/25" />
               <span>
                 {String(safeIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
@@ -481,7 +485,7 @@ function FullBleedContent({
                 <button
                   type="button"
                   onClick={goPrev}
-                  aria-label="Previous image"
+                  aria-label="Image précédente"
                   className="absolute left-5 top-1/2 z-10 -translate-y-1/2 rounded-full border border-ivory/30 bg-ivory/10 p-3 text-ivory/80 opacity-100 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-md transition hover:bg-ivory/20 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <ChevronLeft size={18} />
@@ -489,7 +493,7 @@ function FullBleedContent({
                 <button
                   type="button"
                   onClick={goNext}
-                  aria-label="Next image"
+                  aria-label="Image suivante"
                   className="absolute right-5 top-1/2 z-10 -translate-y-1/2 rounded-full border border-ivory/30 bg-ivory/10 p-3 text-ivory/80 opacity-100 shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-md transition hover:bg-ivory/20 md:opacity-0 md:group-hover:opacity-100"
                 >
                   <ChevronRight size={18} />
@@ -498,7 +502,7 @@ function FullBleedContent({
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                       <p className="eyebrow text-ivory/70">
-                        Frame {String(safeIndex + 1).padStart(2, "0")}
+                        Cadre {String(safeIndex + 1).padStart(2, "0")}
                       </p>
                       {activeCaption && (
                         <p className="mt-2 max-w-xl text-sm text-ivory/80">
@@ -512,7 +516,7 @@ function FullBleedContent({
                           key={`dot-${i}`}
                           type="button"
                           onClick={() => goTo(i)}
-                          aria-label={`Go to image ${i + 1}`}
+                          aria-label={`Aller à l'image ${i + 1}`}
                           className={`h-1.5 w-6 rounded-full transition ${
                             i === safeIndex ? "bg-ivory/80" : "bg-ivory/20"
                           }`}

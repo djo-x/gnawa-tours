@@ -26,23 +26,29 @@ mockIntersectionObserver.mockReturnValue({
 });
 window.IntersectionObserver = mockIntersectionObserver;
 
+const sections = [
+  { id: "hero", label: "Accueil" },
+  { id: "programs", label: "Programmes" },
+  { id: "booking", label: "Réserver" },
+];
+
 describe("Navigation", () => {
   it("renders the hamburger menu button", () => {
-    render(<Navigation />);
-    const menuButton = screen.getByLabelText("Open menu");
+    render(<Navigation sections={sections} />);
+    const menuButton = screen.getByLabelText("Ouvrir le menu");
     expect(menuButton).toBeInTheDocument();
   });
 
   it("renders section navigation dots", () => {
-    render(<Navigation />);
-    const nav = screen.getByLabelText("Section navigation");
+    render(<Navigation sections={sections} />);
+    const nav = screen.getByLabelText("Navigation des sections");
     expect(nav).toBeInTheDocument();
   });
 
   it("has correct aria labels for section buttons", () => {
-    render(<Navigation />);
-    expect(screen.getByLabelText("Go to Home")).toBeInTheDocument();
-    expect(screen.getByLabelText("Go to Programs")).toBeInTheDocument();
-    expect(screen.getByLabelText("Go to Book")).toBeInTheDocument();
+    render(<Navigation sections={sections} />);
+    expect(screen.getByLabelText("Aller à Accueil")).toBeInTheDocument();
+    expect(screen.getByLabelText("Aller à Programmes")).toBeInTheDocument();
+    expect(screen.getByLabelText("Aller à Réserver")).toBeInTheDocument();
   });
 });

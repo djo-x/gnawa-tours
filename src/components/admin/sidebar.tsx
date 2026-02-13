@@ -16,12 +16,12 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/programs", label: "Programs", icon: Map },
+  { href: "/admin/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/admin/programs", label: "Programmes", icon: Map },
   { href: "/admin/sections", label: "Sections", icon: Layers },
-  { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
-  { href: "/admin/media", label: "Media", icon: ImageIcon },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/bookings", label: "Réservations", icon: CalendarCheck },
+  { href: "/admin/media", label: "Médias", icon: ImageIcon },
+  { href: "/admin/settings", label: "Paramètres", icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -44,13 +44,13 @@ export function AdminSidebar() {
       <div className="flex h-16 items-center justify-between border-b border-border/70 px-4">
         {!collapsed && (
           <Link href="/admin/dashboard" className="font-heading text-lg font-bold text-primary">
-            Gnawa Admin
+            Gnaoua Admin
           </Link>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="rounded-md p-2 hover:bg-muted"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Développer la barre latérale" : "Réduire la barre latérale"}
         >
           <Menu size={18} />
         </button>
@@ -85,7 +85,7 @@ export function AdminSidebar() {
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
         >
           <LogOut size={18} />
-          {!collapsed && "Logout"}
+          {!collapsed && "Déconnexion"}
         </button>
       </div>
     </aside>

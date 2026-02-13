@@ -29,7 +29,7 @@ export async function createProgram(data: z.infer<typeof programSchema>) {
   const parsed = programSchema.parse(data);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -47,7 +47,7 @@ export async function updateProgram(id: string, data: z.infer<typeof programSche
   const parsed = programSchema.parse(data);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -63,7 +63,7 @@ export async function updateProgram(id: string, data: z.infer<typeof programSche
 
 export async function deleteProgram(id: string) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -79,7 +79,7 @@ export async function deleteProgram(id: string) {
 
 export async function toggleProgramPublished(id: string, is_published: boolean) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");

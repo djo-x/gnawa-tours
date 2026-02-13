@@ -6,6 +6,7 @@ import { z } from "zod";
 const sectionSchema = z.object({
   section_key: z.string().min(1),
   title: z.string().min(1),
+  nav_title: z.string().min(1),
   subtitle: z.string().optional().default(""),
   content: z.record(z.string(), z.unknown()).default({}),
   layout_type: z.enum(["text-left", "text-right", "centered", "full-bleed", "grid"]),
@@ -18,7 +19,7 @@ export async function createSection(data: z.infer<typeof sectionSchema>) {
   const parsed = sectionSchema.parse(data);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -36,7 +37,7 @@ export async function updateSection(id: string, data: z.infer<typeof sectionSche
   const parsed = sectionSchema.parse(data);
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -52,7 +53,7 @@ export async function updateSection(id: string, data: z.infer<typeof sectionSche
 
 export async function deleteSection(id: string) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -68,7 +69,7 @@ export async function deleteSection(id: string) {
 
 export async function toggleSectionVisibility(id: string, is_visible: boolean) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");

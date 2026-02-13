@@ -12,10 +12,10 @@ import type { DynamicSection as DynamicSectionType } from "@/types/section";
 // Default data used when Supabase is not configured
 const defaultHero: HeroSettings = {
   id: "default",
-  headline: "Discover the Algerian Sahara",
+  headline: "Découvrir le Sahara algérien",
   subheadline:
-    "Journey through ancient landscapes where towering sandstone arches meet endless golden dunes",
-  cta_text: "Begin Your Adventure",
+    "Voyagez à travers des paysages ancestraux où les arches de grès se dressent au-dessus des dunes dorées sans fin",
+  cta_text: "Commencer l’aventure",
   background_image: "https://images.pexels.com/photos/3889843/pexels-photo-3889843.jpeg?w=1920&q=80",
   overlay_opacity: 0.45,
   created_at: "",
@@ -25,29 +25,29 @@ const defaultHero: HeroSettings = {
 const defaultPrograms: Program[] = [
   {
     id: "1",
-    title: "Tadrart Rouge Expedition",
+    title: "Expédition Tadrart Rouge",
     slug: "tadrart-rouge-expedition",
     description:
-      "Immerse yourself in the breathtaking red rock formations of Tadrart Rouge, one of the most spectacular landscapes on Earth.",
-    duration: "5 days / 4 nights",
+      "Plongez dans les formations rocheuses rouges de Tadrart Rouge, l’un des paysages les plus spectaculaires au monde.",
+    duration: "5 jours / 4 nuits",
     start_date: "2026-10-05",
     end_date: "2026-10-09",
     price_eur: 1200,
     price_dzd: 180000,
     difficulty: "moderate",
     highlights: [
-      "Red sandstone arches of Tadrart",
-      "Prehistoric Tassili rock art",
-      "Sunset camel trek across Erg Admer",
-      "Traditional Tuareg camp experience",
-      "Star-gazing in zero light pollution",
+      "Arches de grès rouge du Tadrart",
+      "Art rupestre préhistorique du Tassili",
+      "Balade à dos de chameau au coucher du soleil dans l’Erg Admer",
+      "Campement touareg traditionnel",
+      "Observation des étoiles sans pollution lumineuse",
     ],
     itinerary: [
-      { day: 1, title: "Arrival in Djanet", description: "Arrive at Djanet airport, transfer to hotel." },
-      { day: 2, title: "Into the Tadrart", description: "Depart by 4x4 into the heart of Tadrart Rouge." },
-      { day: 3, title: "Rock Art & Dunes", description: "Morning visit to prehistoric rock paintings." },
-      { day: 4, title: "Deep Desert", description: "Full day exploring remote valleys." },
-      { day: 5, title: "Return to Djanet", description: "Morning drive back to Djanet." },
+      { day: 1, title: "Arrivée à Djanet", description: "Arrivée à l’aéroport de Djanet, transfert à l’hôtel." },
+      { day: 2, title: "Cap sur le Tadrart", description: "Départ en 4x4 au cœur du Tadrart Rouge." },
+      { day: 3, title: "Art rupestre & dunes", description: "Visite matinale des peintures préhistoriques." },
+      { day: 4, title: "Désert profond", description: "Journée complète d’exploration des vallées reculées." },
+      { day: 5, title: "Retour à Djanet", description: "Trajet matinal de retour vers Djanet." },
     ],
     gallery_urls: [],
     cover_image: "https://images.pexels.com/photos/4553618/pexels-photo-4553618.jpeg?w=1920&q=80",
@@ -58,28 +58,28 @@ const defaultPrograms: Program[] = [
   },
   {
     id: "2",
-    title: "Ihrir Desert Oasis Adventure",
+    title: "Aventure oasis d’Ihrir",
     slug: "ihrir-desert-oasis",
     description:
-      "Discover the hidden gem of Ihrir, a stunning desert oasis nestled within the rugged Tassili n'Ajjer plateau.",
-    duration: "4 days / 3 nights",
+      "Découvrez le joyau caché d’Ihrir, une oasis désertique spectaculaire nichée dans le plateau du Tassili n’Ajjer.",
+    duration: "4 jours / 3 nuits",
     start_date: "2026-11-14",
     end_date: "2026-11-17",
     price_eur: 950,
     price_dzd: 145000,
     difficulty: "moderate",
     highlights: [
-      "Ihrir permanent desert lakes",
-      "Tassili n'Ajjer UNESCO World Heritage",
-      "Canyon hiking adventures",
-      "Desert wildlife spotting",
-      "Authentic nomadic cuisine",
+      "Lacs désertiques permanents d’Ihrir",
+      "Tassili n’Ajjer classé au patrimoine mondial de l’UNESCO",
+      "Randonnées dans les canyons",
+      "Observation de la faune du désert",
+      "Cuisine nomade authentique",
     ],
     itinerary: [
-      { day: 1, title: "Djanet to Illizi", description: "Scenic drive through the Tassili plateau." },
-      { day: 2, title: "Journey to Ihrir", description: "4x4 expedition to the remarkable Ihrir oasis." },
-      { day: 3, title: "Oasis Exploration", description: "Full day exploring rock formations and pools." },
-      { day: 4, title: "Return Journey", description: "Morning departure back to Djanet." },
+      { day: 1, title: "Djanet à Illizi", description: "Route panoramique à travers le plateau du Tassili." },
+      { day: 2, title: "Vers Ihrir", description: "Expédition en 4x4 vers l’oasis d’Ihrir." },
+      { day: 3, title: "Exploration de l’oasis", description: "Journée complète parmi les roches et les gueltas." },
+      { day: 4, title: "Retour", description: "Départ matinal vers Djanet." },
     ],
     gallery_urls: [],
     cover_image: "https://images.pexels.com/photos/1703314/pexels-photo-1703314.jpeg?w=1920&q=80",
@@ -94,10 +94,11 @@ const defaultSections: DynamicSectionType[] = [
   {
     id: "1",
     section_key: "our-story",
-    title: "Our Story",
-    subtitle: "Born from a passion for the Sahara",
+    title: "Notre histoire",
+    nav_title: "Notre histoire",
+    subtitle: "Née d’une passion pour le Sahara",
     content: {
-      text: "Gnawa Tours was founded by seasoned Saharan guides who grew up in the shadows of the Tassili mountains. With over two decades of experience leading expeditions across the Algerian desert, we offer authentic, safe, and unforgettable journeys into one of the last true wildernesses on Earth. Our name pays homage to the rich Gnawa musical tradition that echoes through the desert nights.",
+      text: "Gnaoua Tours a été fondée par des guides sahariens chevronnés qui ont grandi à l’ombre des montagnes du Tassili. Forts de plus de vingt ans d’expéditions à travers le désert algérien, nous proposons des voyages authentiques, sûrs et inoubliables au cœur de l’un des derniers grands espaces sauvages. Notre nom rend hommage à la riche tradition musicale gnawa qui résonne dans les nuits du désert.",
       image: "https://images.pexels.com/photos/4577791/pexels-photo-4577791.jpeg?w=1200&q=80",
     },
     layout_type: "centered",
@@ -110,14 +111,15 @@ const defaultSections: DynamicSectionType[] = [
   {
     id: "2",
     section_key: "why-choose-us",
-    title: "Why Choose Us",
-    subtitle: "What makes Gnawa Tours different",
+    title: "Pourquoi nous choisir",
+    nav_title: "Pourquoi nous",
+    subtitle: "Ce qui rend Gnaoua Tours différent",
     content: {
       cards: [
-        { icon: "compass", title: "Expert Local Guides", description: "Our Tuareg guides have lived in the Sahara their entire lives, offering unparalleled knowledge." },
-        { icon: "shield", title: "Safety First", description: "Every expedition is equipped with satellite communication, first aid, and maintained vehicles." },
-        { icon: "star", title: "Small Groups", description: "We keep groups intimate (max 8 travelers) ensuring a personal, immersive experience." },
-        { icon: "heart", title: "Sustainable Travel", description: "We practice leave-no-trace principles and invest directly in local communities." },
+        { icon: "compass", title: "Guides locaux experts", description: "Nos guides touaregs vivent dans le Sahara depuis toujours et partagent un savoir inégalé." },
+        { icon: "shield", title: "Sécurité avant tout", description: "Chaque expédition est équipée de communications satellite, de premiers secours et de véhicules entretenus." },
+        { icon: "star", title: "Petits groupes", description: "Des groupes intimes (max. 8 voyageurs) pour une expérience personnelle et immersive." },
+        { icon: "heart", title: "Voyage durable", description: "Nous pratiquons le “leave no trace” et investissons directement dans les communautés locales." },
       ],
     },
     layout_type: "grid",
@@ -130,11 +132,12 @@ const defaultSections: DynamicSectionType[] = [
   {
     id: "3",
     section_key: "the-desert",
-    title: "The Desert Awaits",
-    subtitle: "A glimpse into the extraordinary",
+    title: "Le désert vous attend",
+    nav_title: "Galerie",
+    subtitle: "Un aperçu de l’extraordinaire",
     content: {
       images: ["https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=800&q=80", "https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg?w=800&q=80", "https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?w=800&q=80", "https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=800&q=80", "https://images.pexels.com/photos/2832040/pexels-photo-2832040.jpeg?w=800&q=80", "https://images.pexels.com/photos/3601425/pexels-photo-3601425.jpeg?w=800&q=80"],
-      text: "From the towering sandstone forests of Tadrart to the crystalline lakes of Ihrir, the Algerian Sahara is a world of contrasts and wonder.",
+      text: "Des forêts de grès du Tadrart aux lacs cristallins d’Ihrir, le Sahara algérien est un monde de contrastes et d’émerveillement.",
     },
     layout_type: "full-bleed",
     background_image: "https://images.pexels.com/photos/3876407/pexels-photo-3876407.jpeg?w=1920&q=80",
@@ -146,13 +149,14 @@ const defaultSections: DynamicSectionType[] = [
   {
     id: "4",
     section_key: "testimonials",
-    title: "What Travelers Say",
-    subtitle: "Stories from the dunes",
+    title: "Ce que disent nos voyageurs",
+    nav_title: "Avis",
+    subtitle: "Récits venus des dunes",
     content: {
       quotes: [
-        { name: "Marie Laurent", location: "Paris, France", text: "The most extraordinary travel experience of my life. The silence of the desert, the kindness of our guides, the star-filled nights — simply unforgettable.", rating: 5 },
-        { name: "Thomas Müller", location: "Berlin, Germany", text: "Gnawa Tours exceeded every expectation. The Tadrart Rouge landscape is like being on another planet. Professional, authentic, and magical.", rating: 5 },
-        { name: "Sarah Chen", location: "London, UK", text: "I have traveled extensively but nothing compares to this. The desert has a way of resetting your soul. Thank you, Gnawa Tours, for an incredible journey.", rating: 5 },
+        { name: "Marie Laurent", location: "Paris, France", text: "L’expérience de voyage la plus extraordinaire de ma vie. Le silence du désert, la gentillesse de nos guides, les nuits étoilées — inoubliable.", rating: 5 },
+        { name: "Thomas Müller", location: "Berlin, Allemagne", text: "Gnaoua Tours a dépassé toutes mes attentes. Le Tadrart Rouge donne l’impression d’être sur une autre planète. Professionnel, authentique et magique.", rating: 5 },
+        { name: "Sarah Chen", location: "Londres, Royaume‑Uni", text: "J’ai beaucoup voyagé mais rien n’égale cela. Le désert a le pouvoir de réinitialiser l’âme. Merci, Gnaoua Tours, pour ce voyage incroyable.", rating: 5 },
       ],
     },
     layout_type: "text-left",
@@ -164,6 +168,42 @@ const defaultSections: DynamicSectionType[] = [
   },
 ];
 
+const defaultShowcaseImages = [
+  "https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=800&q=80",
+  "https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg?w=800&q=80",
+  "https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?w=800&q=80",
+  "https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=800&q=80",
+  "https://images.pexels.com/photos/2832040/pexels-photo-2832040.jpeg?w=800&q=80",
+];
+
+function normalizeShowcaseImages(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) {
+        return parsed.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+      }
+    } catch {
+      return trimmed
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+  }
+  if (value && typeof value === "object") {
+    const images = (value as { images?: unknown }).images;
+    if (Array.isArray(images)) {
+      return images.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+    }
+  }
+  return [];
+}
+
 async function getData() {
   // Try to fetch from Supabase, fallback to defaults
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -171,6 +211,7 @@ async function getData() {
       hero: defaultHero,
       programs: defaultPrograms,
       sections: defaultSections,
+      showcaseImages: defaultShowcaseImages,
     };
   }
 
@@ -178,22 +219,35 @@ async function getData() {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
 
-    const [heroRes, programsRes, sectionsRes] = await Promise.all([
+    const [heroRes, programsRes, sectionsRes, settingsRes] = await Promise.all([
       supabase.from("hero_settings").select("*").single(),
       supabase.from("programs").select("*").eq("is_published", true).order("display_order"),
       supabase.from("dynamic_sections").select("*").eq("is_visible", true).order("display_order"),
+      supabase.from("site_settings").select("*"),
     ]);
+
+    const settingsMap: Record<string, unknown> = {};
+    if (settingsRes.data) {
+      for (const setting of settingsRes.data) {
+        settingsMap[setting.key] = setting.value;
+      }
+    }
 
     return {
       hero: (heroRes.data as HeroSettings) || defaultHero,
       programs: (programsRes.data as Program[]) || defaultPrograms,
       sections: (sectionsRes.data as DynamicSectionType[]) || defaultSections,
+      showcaseImages: (() => {
+        const normalized = normalizeShowcaseImages(settingsMap.showcase_images);
+        return normalized.length > 0 ? normalized : defaultShowcaseImages;
+      })(),
     };
   } catch {
     return {
       hero: defaultHero,
       programs: defaultPrograms,
       sections: defaultSections,
+      showcaseImages: defaultShowcaseImages,
     };
   }
 }
@@ -202,19 +256,19 @@ export default async function HomePage() {
   const headerList = await headers();
   const geoCountry = getGeoCountryFromHeaders(headerList);
   const pricingRegion = geoCountry === "DZ" ? "DZ" : "INTL";
-  const pricingLocale = pricingRegion === "DZ" ? "fr-FR" : "en-US";
-  const { hero, programs, sections } = await getData();
+  const pricingLocale = "fr-FR";
+  const { hero, programs, sections, showcaseImages } = await getData();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Gnawa Tours",
+    name: "Gnaoua Tours",
     description: hero.subheadline,
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://gnawatours.com",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Djanet",
-      addressRegion: "Illizi Province",
+      addressRegion: "Wilaya d’Illizi",
       addressCountry: "DZ",
     },
     offers: programs.map((p) => ({
@@ -234,7 +288,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection hero={hero} />
-      <ShowcaseScroll />
+      <ShowcaseScroll images={showcaseImages} />
       <ProgramsSection
         programs={programs}
         pricingRegion={pricingRegion}

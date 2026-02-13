@@ -4,6 +4,7 @@ export interface DynamicSection {
   id: string;
   section_key: string;
   title: string;
+  nav_title: string;
   subtitle: string | null;
   content: Record<string, unknown>;
   layout_type: LayoutType;

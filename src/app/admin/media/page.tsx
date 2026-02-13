@@ -52,16 +52,16 @@ export default function MediaPage() {
 
         if (!res.ok) {
           const err = await res.json();
-          toast.error(err.error || "Upload failed");
+          toast.error(err.error || "Échec de l’envoi");
           continue;
         }
 
-        toast.success(`Uploaded ${file.name}`);
+        toast.success(`${file.name} envoyé`);
       }
 
       fetchMedia();
     } catch {
-      toast.error("Upload failed");
+      toast.error("Échec de l’envoi");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -69,7 +69,7 @@ export default function MediaPage() {
   }
 
   async function handleDelete(item: MediaItem) {
-    if (!confirm("Delete this file?")) return;
+    if (!confirm("Supprimer ce fichier ?")) return;
 
     const supabase = createClient();
 
@@ -81,7 +81,7 @@ export default function MediaPage() {
 
     // Delete from DB
     await supabase.from("media").delete().eq("id", item.id);
-    toast.success("File deleted");
+    toast.success("Fichier supprimé");
     fetchMedia();
   }
 
@@ -92,7 +92,7 @@ export default function MediaPage() {
       .from("media")
       .update({ alt_text: altText })
       .eq("id", editItem.id);
-    toast.success("Alt text updated");
+    toast.success("Texte alternatif mis à jour");
     setEditItem(null);
     fetchMedia();
   }
@@ -100,7 +100,7 @@ export default function MediaPage() {
   return (
     <div className="space-y-5">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Media Library</h1>
+        <h1 className="font-heading text-4xl font-bold">Médiathèque</h1>
         <div>
           <input
             ref={fileInputRef}
@@ -115,7 +115,7 @@ export default function MediaPage() {
             disabled={uploading}
           >
             <Upload size={16} className="mr-1" />
-            {uploading ? "Uploading..." : "Upload"}
+            {uploading ? "Envoi..." : "Téléverser"}
           </Button>
         </div>
       </div>
@@ -145,14 +145,14 @@ export default function MediaPage() {
       >
         <div className="text-center text-sm text-muted-foreground">
           <ImageIcon size={32} className="mx-auto mb-2" />
-          <p>Drag & drop images here, or click to browse</p>
+          <p>Glissez-déposez des images ici, ou cliquez pour parcourir</p>
         </div>
       </div>
 
       {/* Media grid */}
       {media.length === 0 ? (
         <p className="text-muted-foreground">
-          No media files yet. Upload images to see them here.
+          Aucun fichier média pour le moment. Téléversez des images pour les voir ici.
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -202,19 +202,19 @@ export default function MediaPage() {
       <Dialog open={!!editItem} onOpenChange={(open) => !open && setEditItem(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Alt Text</DialogTitle>
+            <DialogTitle>Modifier le texte alternatif</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
               value={altText}
               onChange={(e) => setAltText(e.target.value)}
-              placeholder="Describe this image..."
+              placeholder="Décrivez cette image..."
             />
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setEditItem(null)}>
-                Cancel
+                Annuler
               </Button>
-              <Button onClick={handleUpdateAlt}>Save</Button>
+              <Button onClick={handleUpdateAlt}>Enregistrer</Button>
             </div>
           </div>
         </DialogContent>

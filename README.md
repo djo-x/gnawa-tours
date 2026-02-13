@@ -1,4 +1,4 @@
-# Gnawa Tours
+# Gnaoua Tours
 
 Premium travel agency website specializing in Algerian Sahara expeditions (Djanet/Tadrart Rouge, Illizi/Ihrir). Features a cinematic public website with smooth-scroll animations and a full admin panel.
 

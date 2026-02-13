@@ -1,11 +1,11 @@
--- Gnawa Tours Initial Schema
+-- Gnaoua Tours Initial Schema
 
 -- Hero Settings
 CREATE TABLE IF NOT EXISTS hero_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  headline TEXT NOT NULL DEFAULT 'Explore the Sahara',
-  subheadline TEXT NOT NULL DEFAULT 'Unforgettable desert expeditions in Algeria',
-  cta_text TEXT NOT NULL DEFAULT 'Book Your Journey',
+  headline TEXT NOT NULL DEFAULT 'Découvrir le Sahara',
+  subheadline TEXT NOT NULL DEFAULT 'Expéditions désertiques inoubliables en Algérie',
+  cta_text TEXT NOT NULL DEFAULT 'Réservez votre voyage',
   background_image TEXT,
   overlay_opacity NUMERIC(3,2) DEFAULT 0.4,
   created_at TIMESTAMPTZ DEFAULT now(),
@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS dynamic_sections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   section_key TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
+  nav_title TEXT NOT NULL,
   subtitle TEXT,
   content JSONB DEFAULT '{}',
   layout_type TEXT NOT NULL CHECK (layout_type IN ('text-left', 'text-right', 'centered', 'full-bleed', 'grid')),

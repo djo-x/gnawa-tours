@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json(
-      { error: "Supabase not configured" },
+      { error: "Supabase n’est pas configuré" },
       { status: 500 }
     );
   }
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
     }
 
     const { createClient } = await import("@/lib/supabase/server");
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     });
   } catch {
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erreur interne du serveur" },
       { status: 500 }
     );
   }

@@ -5,37 +5,37 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Gnawa Tours - Saharan Desert Expeditions",
-    template: "%s | Gnawa Tours",
+    default: "Gnaoua Tours - Expéditions dans le Sahara",
+    template: "%s | Gnaoua Tours",
   },
   description:
-    "Premium travel agency specializing in Algerian Sahara expeditions. Explore Djanet, Tadrart Rouge, Illizi, and Ihrir with expert Tuareg guides.",
+    "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien. Explorez Djanet, Tadrart Rouge, Illizi et Ihrir avec des guides touaregs experts.",
   keywords: [
     "sahara",
-    "algeria",
-    "desert expedition",
+    "algérie",
+    "expédition désert",
     "djanet",
     "tadrart rouge",
     "ihrir",
     "tassili",
     "tuareg",
-    "travel",
+    "voyage",
   ],
-  authors: [{ name: "Gnawa Tours" }],
+  authors: [{ name: "Gnaoua Tours" }],
   openGraph: {
     type: "website",
-    locale: "en_US",
-    siteName: "Gnawa Tours",
-    title: "Gnawa Tours - Saharan Desert Expeditions",
+    locale: "fr_FR",
+    siteName: "Gnaoua Tours",
+    title: "Gnaoua Tours - Expéditions dans le Sahara",
     description:
-      "Premium travel agency specializing in Algerian Sahara expeditions. Discover the magic of the desert.",
+      "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien. Découvrez la magie du désert.",
     images: [{ url: "/images/og-image.jpg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gnawa Tours - Saharan Desert Expeditions",
+    title: "Gnaoua Tours - Expéditions dans le Sahara",
     description:
-      "Premium travel agency specializing in Algerian Sahara expeditions.",
+      "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien.",
     images: ["/images/og-image.jpg"],
   },
   robots: {
@@ -50,13 +50,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={`${bodoni.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         <a
           href="#hero"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-gold focus:px-4 focus:py-2 focus:text-midnight focus:outline-none"
         >
-          Skip to content
+          Aller au contenu
         </a>
         {children}
         <Toaster />

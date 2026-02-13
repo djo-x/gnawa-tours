@@ -32,7 +32,7 @@ export default function LoginPage() {
 
       window.location.href = "/admin/dashboard";
     } catch {
-      setError("An unexpected error occurred");
+      setError("Une erreur inattendue est survenue");
     } finally {
       setLoading(false);
     }
@@ -43,8 +43,8 @@ export default function LoginPage() {
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(215,167,93,0.18),transparent_35%),radial-gradient(circle_at_80%_15%,rgba(139,164,203,0.18),transparent_30%)]" />
       <Card className="glass-panel w-full max-w-md border-gold/30">
         <CardHeader className="text-center">
-          <CardTitle className="font-heading text-3xl">Gnawa Control Room</CardTitle>
-          <p className="text-sm text-muted-foreground">Sign in to manage tours, sections, media, and bookings</p>
+          <CardTitle className="font-heading text-3xl">Salle de contrôle Gnaoua</CardTitle>
+          <p className="text-sm text-muted-foreground">Connectez-vous pour gérer les circuits, sections, médias et réservations</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,7 +54,7 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E‑mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -65,18 +65,18 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Mot de passe</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter password"
+                placeholder="Saisissez le mot de passe"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Connexion..." : "Se connecter"}
             </Button>
           </form>
         </CardContent>

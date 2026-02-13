@@ -28,10 +28,10 @@ jest.mock("sonner", () => ({
 const mockPrograms: Program[] = [
   {
     id: "1",
-    title: "Tadrart Rouge Expedition",
+    title: "Expédition Tadrart Rouge",
     slug: "tadrart-rouge",
-    description: "A 5-day expedition",
-    duration: "5 days",
+    description: "Une expédition de 5 jours",
+    duration: "5 jours",
     start_date: null,
     end_date: null,
     price_eur: 1200,
@@ -51,21 +51,21 @@ const mockPrograms: Program[] = [
 describe("BookingSection", () => {
   it("renders the booking form", () => {
     render(<BookingSection programs={mockPrograms} />);
-    expect(screen.getByText("Book Your Journey")).toBeInTheDocument();
+    expect(screen.getByText("Réservez votre voyage")).toBeInTheDocument();
   });
 
   it("renders all form fields", () => {
     render(<BookingSection programs={mockPrograms} />);
-    expect(screen.getByLabelText("Full Name *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Email *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Phone")).toBeInTheDocument();
-    expect(screen.getByLabelText("Group Size")).toBeInTheDocument();
+    expect(screen.getByLabelText("Nom complet *")).toBeInTheDocument();
+    expect(screen.getByLabelText("E-mail *")).toBeInTheDocument();
+    expect(screen.getByLabelText("Téléphone")).toBeInTheDocument();
+    expect(screen.getByLabelText("Taille du groupe")).toBeInTheDocument();
     expect(screen.getByLabelText("Message")).toBeInTheDocument();
   });
 
   it("renders the submit button", () => {
     render(<BookingSection programs={mockPrograms} />);
-    expect(screen.getByText("Send Inquiry")).toBeInTheDocument();
+    expect(screen.getByText("Envoyer la demande")).toBeInTheDocument();
   });
 
   it("has booking section id", () => {

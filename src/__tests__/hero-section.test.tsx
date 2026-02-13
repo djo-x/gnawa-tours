@@ -28,9 +28,9 @@ jest.mock("gsap/ScrollTrigger", () => ({
 
 const mockHero: HeroSettings = {
   id: "1",
-  headline: "Discover the Algerian Sahara",
-  subheadline: "Journey through ancient landscapes",
-  cta_text: "Begin Your Adventure",
+  headline: "Découvrir le Sahara algérien",
+  subheadline: "Voyagez à travers des paysages ancestraux",
+  cta_text: "Commencer l’aventure",
   background_image: "/images/hero.jpg",
   overlay_opacity: 0.45,
   created_at: "",
@@ -41,21 +41,21 @@ describe("HeroSection", () => {
   it("renders headline text", () => {
     render(<HeroSection hero={mockHero} />);
     expect(
-      screen.getByText("Discover the Algerian Sahara")
+      screen.getByText("Découvrir le Sahara algérien")
     ).toBeInTheDocument();
   });
 
   it("renders subheadline", () => {
     render(<HeroSection hero={mockHero} />);
     expect(
-      screen.getByText("Journey through ancient landscapes")
+      screen.getByText("Voyagez à travers des paysages ancestraux")
     ).toBeInTheDocument();
   });
 
   it("renders CTA button", () => {
     render(<HeroSection hero={mockHero} />);
     expect(
-      screen.getByText("Begin Your Adventure")
+      screen.getByText("Commencer l’aventure")
     ).toBeInTheDocument();
   });
 

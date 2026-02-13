@@ -8,17 +8,12 @@ import { cinematicScrollTo } from "@/lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const sections = [
-  { id: "hero", label: "Home" },
-  { id: "programs", label: "Programs" },
-  { id: "our-story", label: "Our Story" },
-  { id: "why-choose-us", label: "Why Us" },
-  { id: "the-desert", label: "Gallery" },
-  { id: "testimonials", label: "Reviews" },
-  { id: "booking", label: "Book" },
-];
+type NavSection = {
+  id: string;
+  label: string;
+};
 
-export function Navigation() {
+export function Navigation({ sections }: { sections: NavSection[] }) {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showRail, setShowRail] = useState(false);
@@ -47,7 +42,7 @@ export function Navigation() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [sections]);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -94,8 +89,7 @@ export function Navigation() {
           onClick={() => scrollToSection("hero")}
           className="rounded-full border border-ivory/20 bg-ivory/5 px-5 py-3 text-left backdrop-blur-md transition hover:border-ivory/40"
         >
-          <p className="font-heading text-2xl leading-none text-ivory">GNWA</p>
-          <p className="mt-1 text-[9px] uppercase tracking-[0.45em] text-ivory/60">Sahara Atelier</p>
+          <p className="font-heading text-2xl leading-none text-ivory">Gnaoua Tours</p>
         </button>
       </div>
 
@@ -103,7 +97,7 @@ export function Navigation() {
         className={`fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 transition-opacity duration-500 md:flex ${
           showRail ? "opacity-100" : "opacity-0"
         }`}
-        aria-label="Section navigation"
+        aria-label="Navigation des sections"
       >
         {sections.map(({ id, label }, i) => (
           <button
@@ -114,7 +108,7 @@ export function Navigation() {
                 ? "text-ivory"
                 : "text-ivory/55 hover:text-ivory"
             }`}
-            aria-label={`Go to ${label}`}
+            aria-label={`Aller à ${label}`}
             title={label}
           >
             <span>{label}</span>
@@ -128,7 +122,7 @@ export function Navigation() {
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
         className="fixed right-5 top-5 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/25 bg-ivory/5 text-ivory backdrop-blur-md transition-colors hover:bg-ivory/10"
-        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
       >
         {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>

@@ -10,7 +10,7 @@ export async function updateHeroSettings(data: {
   overlay_opacity: number;
 }) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -41,7 +41,7 @@ export async function updateHeroSettings(data: {
 
 export async function updateSiteSetting(key: string, value: unknown) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -73,7 +73,7 @@ export async function updateSiteSetting(key: string, value: unknown) {
 
 export async function updateBookingStatus(id: string, status: string) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    return { error: "Supabase not configured" };
+    return { error: "Supabase n’est pas configuré" };
   }
 
   const { createClient } = await import("@/lib/supabase/server");

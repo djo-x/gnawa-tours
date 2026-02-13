@@ -38,6 +38,12 @@ const statusColors: Record<string, string> = {
   confirmed: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
 };
+const statusLabels: Record<string, string> = {
+  new: "Nouveau",
+  contacted: "Contacté",
+  confirmed: "Confirmé",
+  cancelled: "Annulé",
+};
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<
@@ -79,7 +85,6 @@ export default function BookingsPage() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchBookings();
   }, [fetchBookings]);
 
@@ -152,11 +157,11 @@ export default function BookingsPage() {
     }).format(value);
 
   const statusOptions = [
-    { value: "all", label: `All (${summary.counts.total})` },
-    { value: "new", label: `New (${summary.counts.new})` },
-    { value: "contacted", label: `Contacted (${summary.counts.contacted})` },
-    { value: "confirmed", label: `Confirmed (${summary.counts.confirmed})` },
-    { value: "cancelled", label: `Cancelled (${summary.counts.cancelled})` },
+    { value: "all", label: `Tous (${summary.counts.total})` },
+    { value: "new", label: `Nouveau (${summary.counts.new})` },
+    { value: "contacted", label: `Contacté (${summary.counts.contacted})` },
+    { value: "confirmed", label: `Confirmé (${summary.counts.confirmed})` },
+    { value: "cancelled", label: `Annulé (${summary.counts.cancelled})` },
   ];
 
   async function handleStatusChange(id: string, status: string) {
@@ -164,24 +169,24 @@ export default function BookingsPage() {
     if (result.error) {
       toast.error(result.error);
     } else {
-      toast.success("Status updated");
+      toast.success("Statut mis à jour");
       fetchBookings();
     }
   }
 
   function exportCsv() {
     const headers = [
-      "Name",
-      "Email",
-      "Phone",
-      "Program",
-      "Group Size",
-      "Origin",
-      "Value EUR",
-      "Value DZD",
-      "Status",
+      "Nom",
+      "E-mail",
+      "Téléphone",
+      "Programme",
+      "Taille du groupe",
+      "Origine",
+      "Valeur EUR",
+      "Valeur DZD",
+      "Statut",
       "Message",
-      "Created",
+      "Créé le",
     ];
     const rows = filtered.map((b) => [
       b.full_name,
@@ -192,7 +197,7 @@ export default function BookingsPage() {
       b.origin_country || "",
       b.program_price_eur ? b.program_price_eur * b.group_size : "",
       b.program_price_dzd ? b.program_price_dzd * b.group_size : "",
-      b.status,
+      statusLabels[b.status] || b.status,
       b.message || "",
       b.created_at,
     ]);
@@ -202,7 +207,7 @@ export default function BookingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `bookings-${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `reservations-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -210,27 +215,27 @@ export default function BookingsPage() {
   return (
     <div className="space-y-5">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-heading text-4xl font-bold">Bookings</h1>
+        <h1 className="font-heading text-4xl font-bold">Réservations</h1>
         <Button variant="outline" onClick={exportCsv}>
-          <Download size={16} className="mr-1" /> Export CSV
+          <Download size={16} className="mr-1" /> Exporter CSV
         </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="glass-panel">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total Bookings</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Total des réservations</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold">{summary.counts.total}</div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {summary.counts.new} new, {summary.counts.confirmed} confirmed
+              {summary.counts.new} nouvelles, {summary.counts.confirmed} confirmées
             </p>
           </CardContent>
         </Card>
         <Card className="glass-panel">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Pipeline Value</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Valeur du pipeline</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
@@ -242,13 +247,13 @@ export default function BookingsPage() {
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Excludes cancelled bookings
+              Hors réservations annulées
             </p>
           </CardContent>
         </Card>
         <Card className="glass-panel">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Confirmed Revenue</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Revenu confirmé</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
@@ -266,14 +271,14 @@ export default function BookingsPage() {
         </Card>
         <Card className="glass-panel">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Avg Group Size</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Taille moyenne du groupe</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold">
               {summary.averageGroup.toFixed(1)}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Based on {summary.counts.total} bookings
+              Basé sur {summary.counts.total} réservations
             </p>
           </CardContent>
         </Card>
@@ -281,7 +286,7 @@ export default function BookingsPage() {
 
       <div className="mb-4 flex flex-wrap gap-3">
         <Input
-          placeholder="Search by name or email..."
+          placeholder="Rechercher par nom ou e‑mail..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -291,11 +296,11 @@ export default function BookingsPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="new">New</SelectItem>
-            <SelectItem value="contacted">Contacted</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="new">Nouveau</SelectItem>
+            <SelectItem value="contacted">Contacté</SelectItem>
+            <SelectItem value="confirmed">Confirmé</SelectItem>
+            <SelectItem value="cancelled">Annulé</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -318,21 +323,21 @@ export default function BookingsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Program</TableHead>
-              <TableHead>Group</TableHead>
-              <TableHead>Origin</TableHead>
-              <TableHead>Value</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>Nom</TableHead>
+              <TableHead>E-mail</TableHead>
+              <TableHead>Programme</TableHead>
+              <TableHead>Groupe</TableHead>
+              <TableHead>Origine</TableHead>
+              <TableHead>Valeur</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead>Créé le</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center text-muted-foreground">
-                  No bookings found.
+                  Aucune réservation trouvée.
                 </TableCell>
               </TableRow>
             ) : (
@@ -367,7 +372,7 @@ export default function BookingsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge className={statusColors[booking.status]}>
-                      {booking.status}
+                      {statusLabels[booking.status] || booking.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
@@ -388,26 +393,26 @@ export default function BookingsPage() {
         {selectedBooking && (
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Booking: {selectedBooking.full_name}</DialogTitle>
+              <DialogTitle>Réservation : {selectedBooking.full_name}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div>
-                <strong>Email:</strong> {selectedBooking.email}
+                <strong>E-mail :</strong> {selectedBooking.email}
               </div>
               <div>
-                <strong>Phone:</strong> {selectedBooking.phone || "—"}
+                <strong>Téléphone :</strong> {selectedBooking.phone || "—"}
               </div>
               <div>
-                <strong>Group Size:</strong> {selectedBooking.group_size}
+                <strong>Taille du groupe :</strong> {selectedBooking.group_size}
               </div>
               <div>
-                <strong>Program:</strong> {selectedBooking.program_title || "—"}
+                <strong>Programme :</strong> {selectedBooking.program_title || "—"}
               </div>
               <div>
-                <strong>Origin:</strong> {selectedBooking.origin_country || "—"}
+                <strong>Origine :</strong> {selectedBooking.origin_country || "—"}
               </div>
               <div>
-                <strong>Estimated Value:</strong>{" "}
+                <strong>Valeur estimée :</strong>{" "}
                 {(() => {
                   const origin = selectedBooking.origin_country?.toUpperCase() || "INTL";
                   const useDzd = origin === "DZ";
@@ -422,11 +427,11 @@ export default function BookingsPage() {
                 })()}
               </div>
               <div>
-                <strong>Message:</strong>{" "}
-                {selectedBooking.message || "No message"}
+                <strong>Message :</strong>{" "}
+                {selectedBooking.message || "Aucun message"}
               </div>
               <div className="flex items-center gap-3">
-                <strong>Status:</strong>
+                <strong>Statut :</strong>
                 <Select
                   value={selectedBooking.status}
                   onValueChange={(val) =>
@@ -437,10 +442,10 @@ export default function BookingsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="contacted">Contacted</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="new">Nouveau</SelectItem>
+                    <SelectItem value="contacted">Contacté</SelectItem>
+                    <SelectItem value="confirmed">Confirmé</SelectItem>
+                    <SelectItem value="cancelled">Annulé</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
