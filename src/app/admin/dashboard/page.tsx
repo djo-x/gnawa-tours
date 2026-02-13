@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CalendarCheck, Map as MapIcon, Layers, Eye } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -18,8 +26,6 @@ type DashboardStats = {
   newBookings: number;
   confirmedBookings: number;
   cancelledBookings: number;
-  bookingsLast7: number;
-  bookingsLast30: number;
   pipelineValueEur: number;
   pipelineValueDzd: number;
   confirmedValueEur: number;
@@ -37,8 +43,6 @@ const emptyStats: DashboardStats = {
   newBookings: 0,
   confirmedBookings: 0,
   cancelledBookings: 0,
-  bookingsLast7: 0,
-  bookingsLast30: 0,
   pipelineValueEur: 0,
   pipelineValueDzd: 0,
   confirmedValueEur: 0,
@@ -64,12 +68,100 @@ const statusLabels: Record<string, string> = {
   cancelled: "Annulé",
 };
 
+type DatePreset = "last_month" | "last_3_months" | "last_6_months" | "last_year" | "custom";
+
+const presetOptions: Array<{ value: DatePreset; label: string }> = [
+  { value: "last_month", label: "Dernier mois" },
+  { value: "last_3_months", label: "3 derniers mois" },
+  { value: "last_6_months", label: "6 derniers mois" },
+  { value: "last_year", label: "Dernière année" },
+  { value: "custom", label: "Personnalisé" },
+];
+
+const presetLabels: Record<DatePreset, string> = {
+  last_month: "Dernier mois",
+  last_3_months: "3 derniers mois",
+  last_6_months: "6 derniers mois",
+  last_year: "Dernière année",
+  custom: "Période personnalisée",
+};
+
+const msDay = 24 * 60 * 60 * 1000;
+
+function formatInputDate(date: Date) {
+  return date.toISOString().split("T")[0];
+}
+
+function parseInputDate(value?: string | null) {
+  if (!value) return null;
+  const parsed = new Date(`${value}T00:00:00`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getPresetRange(preset: DatePreset) {
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+  const start = new Date(end);
+  if (preset === "last_3_months") {
+    start.setMonth(start.getMonth() - 3);
+  } else if (preset === "last_6_months") {
+    start.setMonth(start.getMonth() - 6);
+  } else if (preset === "last_year") {
+    start.setFullYear(start.getFullYear() - 1);
+  } else {
+    start.setMonth(start.getMonth() - 1);
+  }
+  start.setHours(0, 0, 0, 0);
+  return { start, end };
+}
+
+function resolveRange(preset: DatePreset, startInput: string, endInput: string) {
+  if (preset !== "custom") {
+    const parsedStart = parseInputDate(startInput);
+    const parsedEnd = parseInputDate(endInput);
+    if (parsedStart && parsedEnd) {
+      parsedStart.setHours(0, 0, 0, 0);
+      parsedEnd.setHours(23, 59, 59, 999);
+      return { start: parsedStart, end: parsedEnd, label: presetLabels[preset] };
+    }
+    const presetRange = getPresetRange(preset);
+    return { ...presetRange, label: presetLabels[preset] };
+  }
+
+  const fallback = getPresetRange("last_month");
+  let start = parseInputDate(startInput) || fallback.start;
+  let end = parseInputDate(endInput) || fallback.end;
+  start = new Date(start);
+  end = new Date(end);
+  start.setHours(0, 0, 0, 0);
+  end.setHours(23, 59, 59, 999);
+  if (start > end) {
+    const tmp = start;
+    start = end;
+    end = tmp;
+  }
+  return { start, end, label: presetLabels.custom };
+}
+
+function formatRangeLabel(start: Date, end: Date) {
+  const formatter = new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+  return `${formatter.format(start)} → ${formatter.format(end)}`;
+}
+
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>(emptyStats);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const [datePreset, setDatePreset] = useState<DatePreset>("last_month");
+  const initialRange = getPresetRange("last_month");
+  const [startDate, setStartDate] = useState<string>(formatInputDate(initialRange.start));
+  const [endDate, setEndDate] = useState<string>(formatInputDate(initialRange.end));
 
   const formatCurrency = (value: number, currency: "EUR" | "DZD") =>
     new Intl.NumberFormat(undefined, {
@@ -79,9 +171,18 @@ export default function DashboardPage() {
     }).format(value);
 
   useEffect(() => {
+    if (datePreset === "custom") return;
+    const presetRange = getPresetRange(datePreset);
+    setStartDate(formatInputDate(presetRange.start));
+    setEndDate(formatInputDate(presetRange.end));
+  }, [datePreset]);
+
+  useEffect(() => {
     let active = true;
 
     async function loadStats() {
+      setLoading(true);
+      setErrorMessage(null);
       if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
         if (active) {
           setStats(emptyStats);
@@ -92,6 +193,7 @@ export default function DashboardPage() {
       }
 
       try {
+        const { start, end } = resolveRange(datePreset, startDate, endDate);
         const supabase = createClient();
         const {
           data: { session },
@@ -103,19 +205,16 @@ export default function DashboardPage() {
           }
           return;
         }
-        const now = new Date();
-        const last7 = new Date(now);
-        last7.setDate(now.getDate() - 7);
-        const last30 = new Date(now);
-        last30.setDate(now.getDate() - 30);
+        let bookingsQuery = supabase
+          .from("bookings")
+          .select(
+            "id, full_name, email, status, created_at, group_size, program_id, origin_country"
+          )
+          .order("created_at", { ascending: false });
+        bookingsQuery = bookingsQuery.gte("created_at", start.toISOString()).lte("created_at", end.toISOString());
 
         const [bookingsRes, programsRes, sectionsRes] = await Promise.all([
-          supabase
-            .from("bookings")
-            .select(
-              "id, full_name, email, status, created_at, group_size, program_id, origin_country"
-            )
-            .order("created_at", { ascending: false }),
+          bookingsQuery,
           supabase
             .from("programs")
             .select("id, title, price_eur, price_dzd")
@@ -145,33 +244,56 @@ export default function DashboardPage() {
         let newBookings = 0;
         let confirmedBookings = 0;
         let cancelledBookings = 0;
-        let bookingsLast7 = 0;
-        let bookingsLast30 = 0;
         let pipelineValueEur = 0;
         let pipelineValueDzd = 0;
         let confirmedValueEur = 0;
         let confirmedValueDzd = 0;
         let groupTotal = 0;
+        const rangeDays =
+          Math.max(1, Math.floor((end.getTime() - start.getTime()) / msDay) + 1);
+        const bucket =
+          rangeDays > 180 ? "month" : rangeDays > 60 ? "week" : "day";
         const dailySeries: DailySeries = [];
-        const dayCount = 14;
-        const dayKeys: string[] = [];
-        for (let i = dayCount - 1; i >= 0; i -= 1) {
-          const day = new Date(now);
-          day.setDate(now.getDate() - i);
-          day.setHours(0, 0, 0, 0);
-          const key = day.toISOString().split("T")[0];
-          dayKeys.push(key);
-          dailySeries.push({
-            label: new Intl.DateTimeFormat(undefined, {
-              month: "short",
-              day: "numeric",
-            }).format(day),
-            count: 0,
-            revenueEur: 0,
-            revenueDzd: 0,
-          });
+        const indexMap = new Map<string, number>();
+        if (bucket === "month") {
+          const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+          while (cursor <= end) {
+            const key = `${cursor.getFullYear()}-${cursor.getMonth()}`;
+            indexMap.set(key, dailySeries.length);
+            dailySeries.push({
+              label: new Intl.DateTimeFormat("fr-FR", {
+                month: "short",
+                year: "2-digit",
+              }).format(cursor),
+              count: 0,
+              revenueEur: 0,
+              revenueDzd: 0,
+            });
+            cursor.setMonth(cursor.getMonth() + 1);
+          }
+        } else {
+          const step = bucket === "week" ? 7 : 1;
+          const bucketCount = Math.ceil(rangeDays / step);
+          for (let i = 0; i < bucketCount; i += 1) {
+            const bucketStart = new Date(start);
+            bucketStart.setDate(start.getDate() + i * step);
+            dailySeries.push({
+              label:
+                bucket === "week"
+                  ? `S${i + 1} ${new Intl.DateTimeFormat("fr-FR", {
+                      month: "short",
+                      day: "numeric",
+                    }).format(bucketStart)}`
+                  : new Intl.DateTimeFormat("fr-FR", {
+                      month: "short",
+                      day: "numeric",
+                    }).format(bucketStart),
+              count: 0,
+              revenueEur: 0,
+              revenueDzd: 0,
+            });
+          }
         }
-        const dayIndex = new Map(dayKeys.map((key, idx) => [key, idx]));
 
         bookingsData.forEach((booking: Record<string, unknown>) => {
           const status = booking.status as string;
@@ -208,12 +330,19 @@ export default function DashboardPage() {
           const createdAt = booking.created_at as string | undefined;
           if (createdAt) {
             const created = new Date(createdAt);
-            if (created >= last7) bookingsLast7 += 1;
-            if (created >= last30) bookingsLast30 += 1;
-
-            const key = created.toISOString().split("T")[0];
-            const idx = dayIndex.get(key);
-            if (idx !== undefined) {
+            if (created < start || created > end) return;
+            let idx: number | undefined;
+            if (bucket === "month") {
+              const key = `${created.getFullYear()}-${created.getMonth()}`;
+              idx = indexMap.get(key);
+            } else {
+              const daysFromStart = Math.floor(
+                (created.getTime() - start.getTime()) / msDay
+              );
+              const step = bucket === "week" ? 7 : 1;
+              idx = Math.floor(daysFromStart / step);
+            }
+            if (idx !== undefined && dailySeries[idx]) {
               dailySeries[idx].count += 1;
               if (status === "confirmed") {
                 if (useDzd) {
@@ -252,8 +381,6 @@ export default function DashboardPage() {
             newBookings,
             confirmedBookings,
             cancelledBookings,
-            bookingsLast7,
-            bookingsLast30,
             pipelineValueEur,
             pipelineValueDzd,
             confirmedValueEur,
@@ -296,7 +423,7 @@ export default function DashboardPage() {
       active = false;
       authListener?.subscription?.unsubscribe();
     };
-  }, []);
+  }, [datePreset, startDate, endDate]);
 
   if (!mounted) {
     return (
@@ -320,17 +447,24 @@ export default function DashboardPage() {
       </div>
     );
   }
+  const { start: rangeStart, end: rangeEnd, label: rangeLabel } = resolveRange(
+    datePreset,
+    startDate,
+    endDate
+  );
+  const rangeMeta = `Du ${formatRangeLabel(rangeStart, rangeEnd)}`;
+  const rangeBadge = `${rangeLabel} · ${formatRangeLabel(rangeStart, rangeEnd)}`;
   const overviewCards = [
     {
       title: "Total des réservations",
       value: loading ? "—" : stats.totalBookings,
-      meta: `${stats.bookingsLast7} sur les 7 derniers jours`,
+      meta: rangeMeta,
       icon: CalendarCheck,
     },
     {
       title: "Nouvelles demandes",
       value: loading ? "—" : stats.newBookings,
-      meta: `${stats.bookingsLast30} sur les 30 derniers jours`,
+      meta: "Sur la période sélectionnée",
       icon: Eye,
     },
     {
@@ -341,9 +475,11 @@ export default function DashboardPage() {
     },
     {
       title: "Valeur du pipeline",
-      value: loading ? "—" : formatCurrency(stats.pipelineValueEur, "EUR"),
-      subvalue: loading ? null : formatCurrency(stats.pipelineValueDzd, "DZD"),
-      meta: "Hors annulées",
+      dualValues: {
+        eur: loading ? "—" : formatCurrency(stats.pipelineValueEur, "EUR"),
+        dzd: loading ? "—" : formatCurrency(stats.pipelineValueDzd, "DZD"),
+      },
+      meta: "Sur la période sélectionnée",
       icon: Layers,
     },
   ];
@@ -361,6 +497,77 @@ export default function DashboardPage() {
         <p className="text-xs uppercase tracking-[0.22em] text-gold/80">Opérations</p>
         <h1 className="font-heading text-4xl font-bold">Tableau de bord</h1>
       </div>
+
+      <Card className="glass-panel">
+        <CardHeader>
+          <CardTitle className="text-base">Filtre de période</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Période active
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{rangeBadge}</p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="space-y-2">
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  Préréglages
+                </p>
+                <Select
+                  value={datePreset}
+                  onValueChange={(value) => setDatePreset(value as DatePreset)}
+                >
+                  <SelectTrigger className="w-full sm:w-56">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {presetOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {datePreset === "custom" && (
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <div className="space-y-2">
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      Début
+                    </p>
+                    <Input
+                      type="date"
+                      value={startDate}
+                      max={endDate || undefined}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        setDatePreset("custom");
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      Fin
+                    </p>
+                    <Input
+                      type="date"
+                      value={endDate}
+                      min={startDate || undefined}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        setDatePreset("custom");
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats */}
       {errorMessage && (
@@ -382,12 +589,24 @@ export default function DashboardPage() {
               <stat.icon size={18} className="text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{stat.value}</div>
-              {"subvalue" in stat && stat.subvalue ? (
-                <div className="mt-1 text-lg font-semibold text-muted-foreground">
-                  {stat.subvalue}
+              {"dualValues" in stat && stat.dualValues ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      EUR
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold">{stat.dualValues.eur}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                      DZD
+                    </p>
+                    <p className="mt-2 text-2xl font-semibold">{stat.dualValues.dzd}</p>
+                  </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="text-3xl font-bold">{stat.value}</div>
+              )}
               <p className="mt-1 text-xs text-muted-foreground">{stat.meta}</p>
             </CardContent>
           </Card>
@@ -398,18 +617,26 @@ export default function DashboardPage() {
         <Card className="glass-panel">
           <CardHeader>
             <CardTitle>Aperçu des revenus</CardTitle>
+            <p className="text-xs text-muted-foreground">{rangeMeta}</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                Revenu confirmé
-              </p>
-              <p className="mt-2 text-2xl font-semibold">
-                {formatCurrency(stats.confirmedValueEur, "EUR")}
-              </p>
-              <p className="mt-1 text-lg font-semibold text-muted-foreground">
-                {formatCurrency(stats.confirmedValueDzd, "DZD")}
-              </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  EUR confirmé
+                </p>
+                <p className="mt-2 text-2xl font-semibold">
+                  {formatCurrency(stats.confirmedValueEur, "EUR")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                  DZD confirmé
+                </p>
+                <p className="mt-2 text-2xl font-semibold">
+                  {formatCurrency(stats.confirmedValueDzd, "DZD")}
+                </p>
+              </div>
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -422,6 +649,7 @@ export default function DashboardPage() {
         <Card className="glass-panel">
           <CardHeader>
             <CardTitle>Qualité des réservations</CardTitle>
+            <p className="text-xs text-muted-foreground">{rangeMeta}</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -466,7 +694,8 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="glass-panel">
           <CardHeader>
-          <CardTitle>Réservations (14 derniers jours)</CardTitle>
+          <CardTitle>Réservations ({rangeLabel})</CardTitle>
+          <p className="text-xs text-muted-foreground">{rangeMeta}</p>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">
@@ -492,7 +721,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="relative flex h-full items-center justify-center text-xs text-muted-foreground">
-                  Aucune réservation sur les 14 derniers jours.
+                  Aucune réservation sur la période sélectionnée.
                 </div>
               )}
             </div>
@@ -505,6 +734,7 @@ export default function DashboardPage() {
         <Card className="glass-panel">
           <CardHeader>
           <CardTitle>Revenu confirmé (EUR)</CardTitle>
+          <p className="text-xs text-muted-foreground">{rangeMeta}</p>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">
@@ -544,6 +774,7 @@ export default function DashboardPage() {
         <Card className="glass-panel">
           <CardHeader>
           <CardTitle>Revenu confirmé (DZD)</CardTitle>
+          <p className="text-xs text-muted-foreground">{rangeMeta}</p>
           </CardHeader>
           <CardContent>
             <div className="relative h-24">

@@ -43,6 +43,12 @@ export function AdminSidebar() {
   }, [mobileOpen]);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
+    const width = collapsed ? "5rem" : "18rem";
+    document.documentElement.style.setProperty("--admin-sidebar-width", width);
+  }, [collapsed]);
+
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setMobileOpen(false);
