@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload, Image as ImageIcon, Check } from "lucide-react";
+import { Upload, Image as ImageIcon, Check, Music2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +25,7 @@ interface MediaLibraryDialogProps {
   onPick?: (url: string) => void;
   onConfirm?: () => void;
   title?: string;
+  fileKind?: "image" | "audio" | "all";
 }
 
 export function MediaLibraryDialog({
@@ -39,12 +40,19 @@ export function MediaLibraryDialog({
   onPick,
   onConfirm,
   title = "Médiathèque",
+  fileKind = "image",
 }: MediaLibraryDialogProps) {
   const [search, setSearch] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const acceptValue =
+    fileKind === "audio" ? "audio/*" : fileKind === "all" ? "image/*,audio/*" : "image/*";
 
   const filtered = media.filter((item) => {
+    const isImage = (item.file_type || "").startsWith("image/");
+    const isAudio = (item.file_type || "").startsWith("audio/");
+    if (fileKind === "image" && !isImage) return false;
+    if (fileKind === "audio" && !isAudio) return false;
     const q = search.trim().toLowerCase();
     if (!q) return true;
     return (
@@ -114,7 +122,7 @@ export function MediaLibraryDialog({
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept={acceptValue}
               multiple
               onChange={(e) => {
                 if (e.target.files) void handleUpload(e.target.files);
@@ -152,8 +160,18 @@ export function MediaLibraryDialog({
           }}
         >
           <div className="text-center text-sm text-muted-foreground">
-            <ImageIcon size={32} className="mx-auto mb-2" />
-            <p>Glissez-déposez des images ici, ou cliquez pour parcourir</p>
+            {fileKind === "audio" ? (
+              <Music2 size={32} className="mx-auto mb-2" />
+            ) : (
+              <ImageIcon size={32} className="mx-auto mb-2" />
+            )}
+            <p>
+              {fileKind === "audio"
+                ? "Glissez-déposez des fichiers audio ici, ou cliquez pour parcourir"
+                : fileKind === "all"
+                  ? "Glissez-déposez des images ou audios ici, ou cliquez pour parcourir"
+                  : "Glissez-déposez des images ici, ou cliquez pour parcourir"}
+            </p>
           </div>
         </div>
 
@@ -165,6 +183,7 @@ export function MediaLibraryDialog({
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {filtered.map((item) => {
               const selected = selectedUrls.includes(item.file_url);
+              const isAudio = (item.file_type || "").startsWith("audio/");
               return (
                 <button
                   key={item.id}
@@ -174,12 +193,23 @@ export function MediaLibraryDialog({
                     selected ? "border-gold/80 ring-2 ring-gold/40" : "border-border/70"
                   }`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.file_url}
-                    alt={item.alt_text || item.file_name}
-                    className="h-full w-full object-cover"
-                  />
+                  {isAudio ? (
+                    <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-ivory/10 via-ivory/5 to-midnight/30 text-ivory/80">
+                      <Music2 size={30} />
+                      <span className="mt-3 px-3 text-center text-[10px] uppercase tracking-[0.2em] text-ivory/60">
+                        Audio
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.file_url}
+                        alt={item.alt_text || item.file_name}
+                        className="h-full w-full object-cover"
+                      />
+                    </>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                   <div className="absolute bottom-0 left-0 right-0 truncate bg-black/40 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                     {item.file_name}

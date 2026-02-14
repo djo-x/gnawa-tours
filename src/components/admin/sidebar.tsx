@@ -31,10 +31,6 @@ export function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     if (typeof document === "undefined") return;
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {

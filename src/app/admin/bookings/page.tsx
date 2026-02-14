@@ -85,7 +85,10 @@ export default function BookingsPage() {
   }, []);
 
   useEffect(() => {
-    fetchBookings();
+    const timerId = window.setTimeout(() => {
+      void fetchBookings();
+    }, 0);
+    return () => window.clearTimeout(timerId);
   }, [fetchBookings]);
 
   const filtered = bookings.filter((b) => {

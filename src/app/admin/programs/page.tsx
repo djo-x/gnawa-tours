@@ -56,7 +56,10 @@ export default function ProgramsPage() {
   }, []);
 
   useEffect(() => {
-    fetchPrograms();
+    const timerId = window.setTimeout(() => {
+      void fetchPrograms();
+    }, 0);
+    return () => window.clearTimeout(timerId);
   }, [fetchPrograms]);
 
   const filtered = programs.filter((p) =>

@@ -33,7 +33,10 @@ export default function SectionsPage() {
   }, []);
 
   useEffect(() => {
-    fetchSections();
+    const timerId = window.setTimeout(() => {
+      void fetchSections();
+    }, 0);
+    return () => window.clearTimeout(timerId);
   }, [fetchSections]);
 
   async function handleDelete(id: string) {

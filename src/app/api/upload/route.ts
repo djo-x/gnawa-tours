@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
+const ALLOWED_PREFIXES = ["image/", "audio/"];
+
 export async function POST(request: Request) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.json(
@@ -15,13 +18,26 @@ export async function POST(request: Request) {
     if (!file) {
       return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
     }
+    if (!file.type || !ALLOWED_PREFIXES.some((prefix) => file.type.startsWith(prefix))) {
+      return NextResponse.json(
+        { error: "Type de fichier non pris en charge (image ou audio uniquement)" },
+        { status: 400 }
+      );
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "Le fichier dépasse la taille maximale autorisée (25 MB)" },
+        { status: 400 }
+      );
+    }
 
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
 
     // Generate unique filename
-    const ext = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    const ext = file.name.split(".").pop() || "bin";
+    const folder = file.type.startsWith("audio/") ? "audio" : "images";
+    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
 
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage

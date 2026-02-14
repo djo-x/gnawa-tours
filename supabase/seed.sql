@@ -339,5 +339,7 @@ VALUES
 ('contact_phone', '"+213 555 123 456"'::jsonb),
 ('address', '"Djanet, wilaya d’Illizi, Algérie"'::jsonb),
 ('showcase_images', '["https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?w=800&q=80","https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg?w=800&q=80","https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?w=800&q=80","https://images.pexels.com/photos/1430672/pexels-photo-1430672.jpeg?w=800&q=80","https://images.pexels.com/photos/2832040/pexels-photo-2832040.jpeg?w=800&q=80"]'::jsonb),
+('ambient_music_enabled', 'false'::jsonb),
+('ambient_music_tracks', '[]'::jsonb),
 ('social_links', '{"instagram": "https://instagram.com/gnawatours", "facebook": "https://facebook.com/gnawatours", "youtube": "https://youtube.com/@gnawatours"}'::jsonb),
 ('seo', '{"title": "Gnaoua Tours - Expéditions dans le Sahara", "description": "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien.", "keywords": ["sahara", "algérie", "désert", "expédition", "djanet", "tadrart", "ihrir"]}'::jsonb);

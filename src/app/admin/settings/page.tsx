@@ -13,7 +13,7 @@ import { MediaLibraryDialog } from "@/components/admin/media-library-dialog";
 import { useMediaLibrary } from "@/hooks/use-media-library";
 import type { HeroSettings } from "@/types/section";
 
-function normalizeShowcaseImages(value: unknown): string[] {
+function normalizeStringArray(value: unknown): string[] {
   if (Array.isArray(value)) {
     return value.filter((item): item is string => typeof item === "string" && item.trim() !== "");
   }
@@ -33,12 +33,27 @@ function normalizeShowcaseImages(value: unknown): string[] {
     }
   }
   if (value && typeof value === "object") {
-    const images = (value as { images?: unknown }).images;
-    if (Array.isArray(images)) {
-      return images.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+    const candidate = value as Record<string, unknown>;
+    const list =
+      candidate.images ??
+      candidate.tracks ??
+      candidate.urls ??
+      candidate.items;
+    if (Array.isArray(list)) {
+      return list.filter((item): item is string => typeof item === "string" && item.trim() !== "");
     }
   }
   return [];
+}
+
+function toBool(value: unknown): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on";
+  }
+  return false;
 }
 
 export default function SettingsPage() {
@@ -52,6 +67,10 @@ export default function SettingsPage() {
   const [showcaseInput, setShowcaseInput] = useState("");
   const [showcasePickerOpen, setShowcasePickerOpen] = useState(false);
   const [selectedShowcase, setSelectedShowcase] = useState<string[]>([]);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const [musicTracks, setMusicTracks] = useState<string[]>([]);
+  const [musicPickerOpen, setMusicPickerOpen] = useState(false);
+  const [selectedMusicTracks, setSelectedMusicTracks] = useState<string[]>([]);
   const { media, loading: mediaLoading, refresh } = useMediaLibrary();
 
   const fetchData = useCallback(async () => {
@@ -73,15 +92,17 @@ export default function SettingsPage() {
         map[s.key] = s.value;
       }
       setSettings(map);
-      const normalizedShowcase = normalizeShowcaseImages(map.showcase_images);
-      if (normalizedShowcase.length > 0) {
-        setShowcaseImages(normalizedShowcase);
-      }
+      setShowcaseImages(normalizeStringArray(map.showcase_images));
+      setMusicTracks(normalizeStringArray(map.ambient_music_tracks));
+      setMusicEnabled(toBool(map.ambient_music_enabled));
     }
   }, []);
 
   useEffect(() => {
-    fetchData();
+    const timerId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+    return () => window.clearTimeout(timerId);
   }, [fetchData]);
 
   async function handleHeroSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -116,6 +137,8 @@ export default function SettingsPage() {
       updateSiteSetting("contact_phone", formData.get("contact_phone") as string),
       updateSiteSetting("address", formData.get("address") as string),
       updateSiteSetting("showcase_images", showcaseImages),
+      updateSiteSetting("ambient_music_enabled", musicEnabled),
+      updateSiteSetting("ambient_music_tracks", musicTracks),
     ];
 
     const results = await Promise.all(updates);
@@ -326,6 +349,78 @@ export default function SettingsPage() {
                 </div>
               )}
             </div>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <Label htmlFor="ambient_music_enabled">Musique d’ambiance (site public)</Label>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Activez la lecture musicale aléatoire avec contrôle mute côté visiteur.
+                  </p>
+                </div>
+                <button
+                  id="ambient_music_enabled"
+                  type="button"
+                  role="switch"
+                  aria-checked={musicEnabled}
+                  onClick={() => setMusicEnabled((prev) => !prev)}
+                  className={`relative inline-flex h-7 w-12 items-center rounded-full border transition ${
+                    musicEnabled
+                      ? "border-gold/70 bg-gold/30"
+                      : "border-border/70 bg-muted/40"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 rounded-full bg-ivory transition ${
+                      musicEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    await refresh();
+                    setSelectedMusicTracks([]);
+                    setMusicPickerOpen(true);
+                  }}
+                >
+                  Ajouter des pistes audio
+                </Button>
+              </div>
+
+              {musicTracks.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  Aucune piste audio sélectionnée.
+                </p>
+              ) : (
+                <div className="space-y-2 rounded-xl border border-border/60 p-3">
+                  {musicTracks.map((url, index) => (
+                    <div
+                      key={`${url}-${index}`}
+                      className="flex flex-col gap-2 rounded-lg border border-border/60 bg-background/40 p-3 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <audio controls preload="none" src={url} className="w-full sm:max-w-[320px]" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() =>
+                          setMusicTracks((prev) => prev.filter((_, idx) => idx !== index))
+                        }
+                      >
+                        Retirer
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <Button type="submit" disabled={settingsLoading}>
               {settingsLoading ? "Enregistrement..." : "Enregistrer les paramètres du site"}
             </Button>
@@ -340,6 +435,7 @@ export default function SettingsPage() {
         loading={mediaLoading}
         onRefresh={refresh}
         onPick={(url) => setHeroImage(url)}
+        fileKind="image"
       />
 
       <MediaLibraryDialog
@@ -362,6 +458,30 @@ export default function SettingsPage() {
           setShowcasePickerOpen(false);
         }}
         title="Sélectionner des images de vitrine"
+        fileKind="image"
+      />
+
+      <MediaLibraryDialog
+        open={musicPickerOpen}
+        onOpenChange={setMusicPickerOpen}
+        media={media}
+        loading={mediaLoading}
+        onRefresh={refresh}
+        multiple
+        selectedUrls={selectedMusicTracks}
+        onToggleSelect={(url) => {
+          setSelectedMusicTracks((prev) =>
+            prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
+          );
+        }}
+        onConfirm={() => {
+          setMusicTracks((prev) =>
+            Array.from(new Set([...prev, ...selectedMusicTracks]))
+          );
+          setMusicPickerOpen(false);
+        }}
+        title="Sélectionner des pistes audio"
+        fileKind="audio"
       />
     </div>
   );

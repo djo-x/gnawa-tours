@@ -200,7 +200,14 @@ export function BookingSection({
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          suppressHydrationWarning
+          data-lpignore="true"
+          data-form-type="other"
+          autoComplete="off"
+        >
           <div className="form-field grid gap-6">
             <div className="space-y-2">
               <Label htmlFor="full_name" className="text-[11px] uppercase tracking-[0.32em] text-ivory/65">
@@ -212,6 +219,7 @@ export function BookingSection({
                 required
                 placeholder="Votre nom complet"
                 autoComplete="name"
+                data-lpignore="true"
                 className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
               />
             </div>
@@ -226,6 +234,7 @@ export function BookingSection({
                 required
                 placeholder="votre@email.com"
                 autoComplete="email"
+                data-lpignore="true"
                 className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
               />
             </div>
@@ -242,6 +251,7 @@ export function BookingSection({
                 type="tel"
                 placeholder="+213 ..."
                 autoComplete="tel"
+                data-lpignore="true"
                 className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
               />
             </div>
@@ -294,6 +304,7 @@ export function BookingSection({
                 min="1"
                 max="20"
                 defaultValue="1"
+                data-lpignore="true"
                 className="border-ivory/20 bg-ivory/10 text-ivory"
               />
             </div>
@@ -308,6 +319,7 @@ export function BookingSection({
               name="message"
               rows={4}
               placeholder="Parlez-nous de votre expérience idéale dans le désert..."
+              data-lpignore="true"
               className="border-ivory/20 bg-ivory/10 text-ivory placeholder:text-ivory/30"
             />
           </div>

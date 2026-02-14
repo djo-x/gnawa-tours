@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Upload, Trash2, Edit2, Image as ImageIcon } from "lucide-react";
+import { Upload, Trash2, Edit2, Image as ImageIcon, Music2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import type { MediaItem } from "@/types/settings";
@@ -19,6 +19,7 @@ export default function MediaPage() {
   const [uploading, setUploading] = useState(false);
   const [editItem, setEditItem] = useState<MediaItem | null>(null);
   const [altText, setAltText] = useState("");
+  const [kindFilter, setKindFilter] = useState<"all" | "image" | "audio">("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchMedia = useCallback(async () => {
@@ -97,6 +98,13 @@ export default function MediaPage() {
     fetchMedia();
   }
 
+  const filteredMedia = media.filter((item) => {
+    const type = item.file_type || "";
+    if (kindFilter === "image") return type.startsWith("image/");
+    if (kindFilter === "audio") return type.startsWith("audio/");
+    return true;
+  });
+
   return (
     <div className="space-y-5">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -105,7 +113,7 @@ export default function MediaPage() {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,audio/*"
             multiple
             onChange={handleUpload}
             className="hidden"
@@ -146,28 +154,66 @@ export default function MediaPage() {
       >
         <div className="text-center text-sm text-muted-foreground">
           <ImageIcon size={32} className="mx-auto mb-2" />
-          <p>Glissez-déposez des images ici, ou cliquez pour parcourir</p>
+          <p>Glissez-déposez des images ou audios ici, ou cliquez pour parcourir</p>
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          variant={kindFilter === "all" ? "default" : "outline"}
+          onClick={() => setKindFilter("all")}
+          size="sm"
+        >
+          Tous ({media.length})
+        </Button>
+        <Button
+          type="button"
+          variant={kindFilter === "image" ? "default" : "outline"}
+          onClick={() => setKindFilter("image")}
+          size="sm"
+        >
+          Images ({media.filter((m) => (m.file_type || "").startsWith("image/")).length})
+        </Button>
+        <Button
+          type="button"
+          variant={kindFilter === "audio" ? "default" : "outline"}
+          onClick={() => setKindFilter("audio")}
+          size="sm"
+        >
+          Audios ({media.filter((m) => (m.file_type || "").startsWith("audio/")).length})
+        </Button>
+      </div>
+
       {/* Media grid */}
-      {media.length === 0 ? (
+      {filteredMedia.length === 0 ? (
         <p className="text-muted-foreground">
-          Aucun fichier média pour le moment. Téléversez des images pour les voir ici.
+          Aucun média pour ce filtre.
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {media.map((item) => (
+          {filteredMedia.map((item) => (
             <div
               key={item.id}
               className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-muted"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.file_url}
-                alt={item.alt_text || item.file_name}
-                className="h-full w-full object-cover"
-              />
+              {(item.file_type || "").startsWith("audio/") ? (
+                <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-ivory/10 via-ivory/5 to-midnight/30 text-ivory/80">
+                  <Music2 size={34} />
+                  <span className="mt-3 px-3 text-center text-[10px] uppercase tracking-[0.2em] text-ivory/60">
+                    Audio
+                  </span>
+                </div>
+              ) : (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.file_url}
+                    alt={item.alt_text || item.file_name}
+                    className="h-full w-full object-cover"
+                  />
+                </>
+              )}
               <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
                 <div className="flex gap-2 p-2">
                   <Button

@@ -129,4 +129,10 @@ UPDATE site_settings
 SET value = '{"title": "Gnaoua Tours - Expéditions dans le Sahara", "description": "Agence de voyages premium spécialisée dans les expéditions du Sahara algérien.", "keywords": ["sahara", "algérie", "désert", "expédition", "djanet", "tadrart", "ihrir"]}'::jsonb
 WHERE key = 'seo';
 
+INSERT INTO site_settings (key, value)
+VALUES
+  ('ambient_music_enabled', 'false'::jsonb),
+  ('ambient_music_tracks', '[]'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
 COMMIT;
