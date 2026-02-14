@@ -25,12 +25,12 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
     if (prefersReducedMotion) return;
 
     const lenis = new Lenis({
-      duration: 1.9,
+      duration: 0.9,
       easing: cinematicEase,
-      wheelMultiplier: 0.85,
-      touchMultiplier: 1.2,
+      wheelMultiplier: 1.05,
+      touchMultiplier: 1.0,
       syncTouch: true,
-      syncTouchLerp: 0.06,
+      syncTouchLerp: 0.12,
       autoRaf: false,
     });
 

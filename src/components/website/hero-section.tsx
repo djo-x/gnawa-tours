@@ -119,7 +119,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 1.1,
+          scrub: true,
         },
       });
 
@@ -130,7 +130,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 1.25,
+          scrub: true,
         },
       });
 
@@ -141,7 +141,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 1.2,
+          scrub: true,
         },
       });
 
@@ -176,7 +176,7 @@ export function HeroSection({ hero }: HeroSectionProps) {
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=110%",
+        end: "+=88%",
         pin: true,
         pinSpacing: true,
         anticipatePin: 1,
