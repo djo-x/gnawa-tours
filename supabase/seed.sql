@@ -335,6 +335,7 @@ VALUES
 INSERT INTO site_settings (key, value)
 VALUES
 ('site_name', '"Gnaoua Tours"'::jsonb),
+('site_logo', 'null'::jsonb),
 ('contact_email', '"info@gnawatours.com"'::jsonb),
 ('contact_phone', '"+213 555 123 456"'::jsonb),
 ('address', '"Djanet, wilaya d’Illizi, Algérie"'::jsonb),

@@ -13,11 +13,23 @@ type NavSection = {
   label: string;
 };
 
-export function Navigation({ sections }: { sections: NavSection[] }) {
+type NavigationProps = {
+  sections: NavSection[];
+  siteName?: string | null;
+  siteLogo?: string | null;
+};
+
+export function Navigation({ sections, siteName, siteLogo }: NavigationProps) {
   const [activeSection, setActiveSection] = useState("hero");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showRail, setShowRail] = useState(false);
   const progressBarRef = useRef<HTMLDivElement>(null);
+  const resolvedSiteName = siteName || "Gnaoua Tours";
+  const cleanSiteLogo =
+    typeof siteLogo === "string" && siteLogo.trim().length > 0
+      ? siteLogo.trim()
+      : null;
+  const showHeroBrand = activeSection === "hero" && !isMenuOpen;
 
   function scrollToSection(sectionId: string) {
     cinematicScrollTo(sectionId);
@@ -84,12 +96,36 @@ export function Navigation({ sections }: { sections: NavSection[] }) {
         />
       </div>
 
-      <div className="fixed left-5 top-5 z-40 hidden md:block">
+      <div
+        className={`fixed left-4 top-4 z-40 hidden transition-all duration-500 md:block ${
+          showHeroBrand
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none -translate-y-2 opacity-0"
+        }`}
+      >
         <button
           onClick={() => scrollToSection("hero")}
-          className="rounded-full border border-ivory/20 bg-ivory/5 px-5 py-3 text-left backdrop-blur-md transition hover:border-ivory/40"
+          className="group relative inline-flex items-center text-left transition duration-300"
+          aria-label={`Retour à l’accueil ${resolvedSiteName}`}
         >
-          <p className="font-heading text-2xl leading-none text-ivory">Gnaoua Tours</p>
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-2 bg-[radial-gradient(circle,rgba(215,180,124,0.2)_0%,rgba(215,180,124,0.06)_40%,transparent_72%)] blur-xl opacity-65 transition-opacity duration-300 group-hover:opacity-90"
+          />
+          {cleanSiteLogo ? (
+            <span className="relative block h-14 w-40 drop-shadow-[0_16px_38px_rgba(0,0,0,0.45)] sm:h-16 sm:w-48 md:h-20 md:w-56">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={cleanSiteLogo}
+                alt={`Logo ${resolvedSiteName}`}
+                className="h-full w-full object-contain"
+              />
+            </span>
+          ) : (
+            <p className="font-heading text-3xl leading-none text-ivory drop-shadow-[0_10px_24px_rgba(0,0,0,0.45)]">
+              {resolvedSiteName}
+            </p>
+          )}
         </button>
       </div>
 

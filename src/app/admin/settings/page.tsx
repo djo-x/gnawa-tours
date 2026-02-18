@@ -56,6 +56,16 @@ function toBool(value: unknown): boolean {
   return false;
 }
 
+function normalizeSettingString(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    const candidate = value as Record<string, unknown>;
+    const url = candidate.url ?? candidate.src ?? candidate.value;
+    if (typeof url === "string") return url;
+  }
+  return "";
+}
+
 export default function SettingsPage() {
   const [hero, setHero] = useState<HeroSettings | null>(null);
   const [heroImage, setHeroImage] = useState("");
@@ -63,6 +73,8 @@ export default function SettingsPage() {
   const [heroLoading, setHeroLoading] = useState(false);
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [siteLogo, setSiteLogo] = useState("");
+  const [siteLogoPickerOpen, setSiteLogoPickerOpen] = useState(false);
   const [showcaseImages, setShowcaseImages] = useState<string[]>([]);
   const [showcaseInput, setShowcaseInput] = useState("");
   const [showcasePickerOpen, setShowcasePickerOpen] = useState(false);
@@ -92,6 +104,7 @@ export default function SettingsPage() {
         map[s.key] = s.value;
       }
       setSettings(map);
+      setSiteLogo(normalizeSettingString(map.site_logo));
       setShowcaseImages(normalizeStringArray(map.showcase_images));
       setMusicTracks(normalizeStringArray(map.ambient_music_tracks));
       setMusicEnabled(toBool(map.ambient_music_enabled));
@@ -133,6 +146,7 @@ export default function SettingsPage() {
     const formData = new FormData(e.currentTarget);
     const updates = [
       updateSiteSetting("site_name", formData.get("site_name") as string),
+      updateSiteSetting("site_logo", siteLogo.trim() || null),
       updateSiteSetting("contact_email", formData.get("contact_email") as string),
       updateSiteSetting("contact_phone", formData.get("contact_phone") as string),
       updateSiteSetting("address", formData.get("address") as string),
@@ -266,6 +280,41 @@ export default function SettingsPage() {
                   defaultValue={(settings.contact_email as string) || ""}
                 />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="site_logo">Logo du site</Label>
+              <div className="flex flex-wrap gap-2">
+                <Input
+                  id="site_logo"
+                  name="site_logo"
+                  value={siteLogo}
+                  onChange={(e) => setSiteLogo(e.target.value)}
+                  placeholder="Collez l’URL du logo ou choisissez dans la bibliothèque"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={async () => {
+                    await refresh();
+                    setSiteLogoPickerOpen(true);
+                  }}
+                >
+                  Choisir dans la bibliothèque
+                </Button>
+              </div>
+              {siteLogo ? (
+                <div className="rounded-xl border border-border/70 bg-background/35 p-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={siteLogo}
+                    alt="Aperçu du logo"
+                    className="h-14 w-auto max-w-[220px] object-contain"
+                  />
+                </div>
+              ) : null}
+              <p className="text-xs text-muted-foreground">
+                Ce logo remplace le nom en haut à gauche du site public.
+              </p>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -435,6 +484,17 @@ export default function SettingsPage() {
         loading={mediaLoading}
         onRefresh={refresh}
         onPick={(url) => setHeroImage(url)}
+        fileKind="image"
+      />
+
+      <MediaLibraryDialog
+        open={siteLogoPickerOpen}
+        onOpenChange={setSiteLogoPickerOpen}
+        media={media}
+        loading={mediaLoading}
+        onRefresh={refresh}
+        onPick={(url) => setSiteLogo(url)}
+        title="Sélectionner le logo"
         fileKind="image"
       />
 

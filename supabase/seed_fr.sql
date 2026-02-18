@@ -131,6 +131,7 @@ WHERE key = 'seo';
 
 INSERT INTO site_settings (key, value)
 VALUES
+  ('site_logo', 'null'::jsonb),
   ('ambient_music_enabled', 'false'::jsonb),
   ('ambient_music_tracks', '[]'::jsonb)
 ON CONFLICT (key) DO NOTHING;

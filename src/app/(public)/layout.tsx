@@ -16,6 +16,7 @@ type FooterSettings = {
   contactPhone?: string | null;
   address?: string | null;
   siteName?: string | null;
+  siteLogo?: string | null;
 };
 
 type MusicSettings = {
@@ -76,6 +77,11 @@ async function getNavSections(): Promise<NavSection[]> {
 
 function toText(value: unknown): string | null {
   if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    const candidate = value as Record<string, unknown>;
+    const url = candidate.url ?? candidate.src ?? candidate.value;
+    if (typeof url === "string") return url;
+  }
   if (value == null) return null;
   try {
     return String(value);
@@ -146,6 +152,7 @@ async function getPublicSettings(): Promise<FooterSettings & MusicSettings> {
 
     return {
       siteName: toText(map.site_name),
+      siteLogo: toText(map.site_logo),
       contactEmail: toText(map.contact_email),
       contactPhone: toText(map.contact_phone),
       address: toText(map.address),
@@ -168,7 +175,11 @@ export default async function PublicLayout({
   ]);
   return (
     <LenisProvider>
-      <Navigation sections={navSections} />
+      <Navigation
+        sections={navSections}
+        siteName={publicSettings.siteName}
+        siteLogo={publicSettings.siteLogo}
+      />
       <main className="relative">{children}</main>
       <MusicPlayer
         enabled={publicSettings.ambientMusicEnabled}
