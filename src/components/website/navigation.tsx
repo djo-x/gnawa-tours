@@ -129,34 +129,38 @@ export function Navigation({ sections, siteName, siteLogo }: NavigationProps) {
         </button>
       </div>
 
-      <nav
-        className={`fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 transition-opacity duration-500 md:flex ${
+      <div
+        className={`group/nav fixed right-2 top-1/2 z-40 hidden -translate-y-1/2 flex-col transition-opacity duration-500 md:flex ${
           showRail ? "opacity-100" : "opacity-0"
         }`}
-        aria-label="Navigation des sections"
       >
-        {sections.map(({ id, label }, i) => (
-          <button
-            key={id}
-            onClick={() => scrollToSection(id)}
-            className={`group flex w-40 items-center justify-between border-b border-ivory/15 px-1.5 py-3 text-[10px] uppercase tracking-[0.32em] transition ${
-              activeSection === id
-                ? "text-ivory"
-                : "text-ivory/55 hover:text-ivory"
-            }`}
-            aria-label={`Aller à ${label}`}
-            title={label}
-          >
-            <span className="flex items-center gap-3">
-              <span className={`nav-dot ${activeSection === id ? "nav-dot--active" : ""}`} />
-              <span>{label}</span>
-            </span>
-            <span className={`font-heading text-sm tracking-[0.08em] ${activeSection === id ? "text-gold" : "text-ivory/45"}`}>
-              {String(i + 1).padStart(2, "0")}
-            </span>
-          </button>
-        ))}
-      </nav>
+        <nav
+          className="flex flex-col gap-0.5 opacity-50 transition-opacity duration-300 hover:opacity-100"
+          aria-label="Navigation des sections"
+        >
+          {sections.map(({ id, label }, i) => (
+            <button
+              key={id}
+              onClick={() => scrollToSection(id)}
+              className={`group flex w-32 items-center justify-between border-b border-ivory/10 px-1 py-2.5 text-[10px] uppercase tracking-[0.28em] transition-colors ${
+                activeSection === id
+                  ? "text-ivory border-ivory/20"
+                  : "text-ivory/50 hover:text-ivory hover:border-ivory/15"
+              }`}
+              aria-label={`Aller à ${label}`}
+              title={label}
+            >
+              <span className="flex items-center gap-2.5">
+                <span className={`nav-dot ${activeSection === id ? "nav-dot--active" : ""}`} />
+                <span>{label}</span>
+              </span>
+              <span className={`font-heading text-xs tracking-[0.06em] ${activeSection === id ? "text-gold" : "text-ivory/40"}`}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </button>
+          ))}
+        </nav>
+      </div>
 
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}

@@ -86,6 +86,7 @@ export async function updateBookingStatus(id: string, status: string) {
   if (error) return { error: error.message };
 
   revalidatePath("/admin/bookings");
+  revalidatePath(`/admin/bookings/${id}`);
   revalidatePath("/admin/dashboard");
   return { success: true };
 }

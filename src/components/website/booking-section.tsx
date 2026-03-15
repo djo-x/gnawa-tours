@@ -36,7 +36,9 @@ export function BookingSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedProgramId, setSelectedProgramId] = useState("");
   const { originCountry: detectedOrigin } = useRegionalPricing();
-  const resolvedOrigin = originCountry || detectedOrigin;
+  // When server has no geo headers it passes "INTL"; use client hint (timezone/locale) then
+  const resolvedOrigin =
+    originCountry && originCountry !== "INTL" ? originCountry : detectedOrigin;
   const locale = pricingLocale || "fr-FR";
   const selectedProgram = programs.find((program) => program.id === selectedProgramId);
   const formatDate = (value?: string | null) => {

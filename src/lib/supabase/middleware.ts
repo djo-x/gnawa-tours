@@ -33,12 +33,19 @@ export async function updateSession(request: NextRequest) {
   if (isAdminRoute && !isLoginPage && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
+    url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 
   if (isLoginPage && user) {
+    const redirect = request.nextUrl.searchParams.get("redirect");
+    const pathname =
+      redirect && typeof redirect === "string" && redirect.startsWith("/admin/") && redirect !== "/admin/login"
+        ? redirect
+        : "/admin/dashboard";
     const url = request.nextUrl.clone();
-    url.pathname = "/admin/dashboard";
+    url.pathname = pathname;
+    url.search = "";
     return NextResponse.redirect(url);
   }
 

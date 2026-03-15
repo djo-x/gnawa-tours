@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { updateBookingStatus } from "@/app/admin/actions/settings";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -396,7 +397,17 @@ export default function BookingsPage() {
         {selectedBooking && (
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Réservation : {selectedBooking.full_name}</DialogTitle>
+              <div className="flex items-start justify-between gap-2">
+                <DialogTitle>Réservation : {selectedBooking.full_name}</DialogTitle>
+                <Button variant="outline" size="sm" asChild>
+                  <Link
+                    href={`/admin/bookings/${selectedBooking.id}`}
+                    className="inline-flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={14} /> Voir la fiche
+                  </Link>
+                </Button>
+              </div>
             </DialogHeader>
             <div className="space-y-3">
               <div>

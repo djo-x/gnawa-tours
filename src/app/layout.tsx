@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { bodoni, spaceGrotesk } from "@/styles/fonts";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -60,6 +62,8 @@ export default function RootLayout({
         </a>
         {children}
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

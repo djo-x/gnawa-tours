@@ -83,6 +83,10 @@ export default function SettingsPage() {
   const [musicTracks, setMusicTracks] = useState<string[]>([]);
   const [musicPickerOpen, setMusicPickerOpen] = useState(false);
   const [selectedMusicTracks, setSelectedMusicTracks] = useState<string[]>([]);
+  const [notificationAdminEmails, setNotificationAdminEmails] = useState<string[]>([]);
+  const [notificationEmailInput, setNotificationEmailInput] = useState("");
+  const [notificationTelegramChatIds, setNotificationTelegramChatIds] = useState<string[]>([]);
+  const [notificationTelegramInput, setNotificationTelegramInput] = useState("");
   const { media, loading: mediaLoading, refresh } = useMediaLibrary();
 
   const fetchData = useCallback(async () => {
@@ -108,6 +112,8 @@ export default function SettingsPage() {
       setShowcaseImages(normalizeStringArray(map.showcase_images));
       setMusicTracks(normalizeStringArray(map.ambient_music_tracks));
       setMusicEnabled(toBool(map.ambient_music_enabled));
+      setNotificationAdminEmails(normalizeStringArray(map.notification_admin_emails));
+      setNotificationTelegramChatIds(normalizeStringArray(map.notification_telegram_chat_ids));
     }
   }, []);
 
@@ -153,6 +159,8 @@ export default function SettingsPage() {
       updateSiteSetting("showcase_images", showcaseImages),
       updateSiteSetting("ambient_music_enabled", musicEnabled),
       updateSiteSetting("ambient_music_tracks", musicTracks),
+      updateSiteSetting("notification_admin_emails", notificationAdminEmails),
+      updateSiteSetting("notification_telegram_chat_ids", notificationTelegramChatIds),
     ];
 
     const results = await Promise.all(updates);
@@ -470,6 +478,121 @@ export default function SettingsPage() {
                 </div>
               )}
             </div>
+
+            <Separator />
+
+            <div className="space-y-4">
+              <h3 className="font-heading text-lg font-semibold">Notifications de réservation</h3>
+              <p className="text-sm text-muted-foreground">
+                Quand une nouvelle réservation est envoyée, un e-mail et/ou un message Telegram sont envoyés aux adresses et chats configurés ci‑dessous. L’e‑mail nécessite <code className="rounded bg-muted px-1 text-xs">RESEND_API_KEY</code>, Telegram nécessite <code className="rounded bg-muted px-1 text-xs">TELEGRAM_BOT_TOKEN</code> (variables d’environnement).
+              </p>
+
+              <div className="space-y-3">
+                <Label>E-mails des administrateurs</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Input
+                    type="email"
+                    value={notificationEmailInput}
+                    onChange={(e) => setNotificationEmailInput(e.target.value)}
+                    placeholder="admin@exemple.com"
+                    className="max-w-xs"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = notificationEmailInput.trim();
+                      if (!trimmed) return;
+                      setNotificationAdminEmails((prev) =>
+                        Array.from(new Set([...prev, trimmed]))
+                      );
+                      setNotificationEmailInput("");
+                    }}
+                  >
+                    Ajouter
+                  </Button>
+                </div>
+                {notificationAdminEmails.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Aucune adresse. Les e-mails de notification ne seront pas envoyés.
+                  </p>
+                ) : (
+                  <ul className="flex flex-wrap gap-2">
+                    {notificationAdminEmails.map((email, i) => (
+                      <li
+                        key={`${email}-${i}`}
+                        className="flex items-center gap-2 rounded-md border border-border/70 bg-muted/30 px-3 py-1.5 text-sm"
+                      >
+                        <span>{email}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                          onClick={() =>
+                            setNotificationAdminEmails((prev) => prev.filter((_, idx) => idx !== i))
+                          }
+                        >
+                          ×
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <Label>IDs de chat Telegram</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Input
+                    value={notificationTelegramInput}
+                    onChange={(e) => setNotificationTelegramInput(e.target.value)}
+                    placeholder="Ex. -1001234567890 ou 123456789"
+                    className="max-w-xs font-mono text-sm"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = notificationTelegramInput.trim();
+                      if (!trimmed) return;
+                      setNotificationTelegramChatIds((prev) =>
+                        Array.from(new Set([...prev, trimmed]))
+                      );
+                      setNotificationTelegramInput("");
+                    }}
+                  >
+                    Ajouter
+                  </Button>
+                </div>
+                {notificationTelegramChatIds.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Aucun chat. Les notifications Telegram ne seront pas envoyées.
+                  </p>
+                ) : (
+                  <ul className="flex flex-wrap gap-2">
+                    {notificationTelegramChatIds.map((chatId, i) => (
+                      <li
+                        key={`${chatId}-${i}`}
+                        className="flex items-center gap-2 rounded-md border border-border/70 bg-muted/30 px-3 py-1.5 font-mono text-sm"
+                      >
+                        <span>{chatId}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                          onClick={() =>
+                            setNotificationTelegramChatIds((prev) => prev.filter((_, idx) => idx !== i))
+                          }
+                        >
+                          ×
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
             <Button type="submit" disabled={settingsLoading}>
               {settingsLoading ? "Enregistrement..." : "Enregistrer les paramètres du site"}
             </Button>

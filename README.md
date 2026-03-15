@@ -37,6 +37,13 @@ Required variables:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anon/public key
 - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key
 
+Optional (admin booking notifications):
+- `NEXT_PUBLIC_APP_URL` - Public URL of the app (e.g. `https://gnawatours.com`). Used for "View booking" links in email/Telegram. Defaults to `https://${VERCEL_URL}` on Vercel or `http://localhost:3000` in dev.
+- **Resend (email):** `RESEND_API_KEY`, `RESEND_FROM` (sender; use a verified domain or Resend’s onboarding domain for testing). Recipient e-mails are configured in **Admin → Settings → Notifications de réservation** (multiple allowed).
+- **Telegram:** `TELEGRAM_BOT_TOKEN` (from BotFather). Chat IDs are configured in **Admin → Settings → Notifications de réservation** (multiple allowed).
+
+If the API key / token is not set, or no recipients are configured in the panel, the app still works; the corresponding notifications are skipped.
+
 ### 3. Set up the database
 
 Run the migration SQL in your Supabase SQL Editor:
