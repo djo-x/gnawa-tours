@@ -74,14 +74,14 @@ export function ShowcaseScroll({ images = fallbackImages }: { images?: string[] 
             <ParallaxElement
               className="h-full w-full"
               options={{
-                speed: i % 2 === 0 ? 0.12 : -0.08,
+                speed: i % 2 === 0 ? 0.22 : -0.18,
                 axis: "y",
-                scrub: 1.2,
+                scrub: 1.4,
                 start: "top bottom",
                 end: "bottom top",
                 disableBelow: 1024,
-                clamp: [-25, 25],
-                tabletMultiplier: 0.7,
+                clamp: [-40, 40],
+                tabletMultiplier: 0.9,
               }}
             >
               <Image

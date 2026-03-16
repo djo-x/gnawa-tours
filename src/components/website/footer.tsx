@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Instagram, Mail, Phone, MapPin } from "lucide-react";
@@ -44,6 +44,9 @@ export function Footer({
   const resolvedAddress = address || fallbackContact.address;
   const resolvedSiteName = siteName || fallbackContact.siteName;
   const footerRef = useRef<HTMLElement>(null);
+  const waveRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [isVisible, setIsVisible] = useState(false);
+  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
@@ -75,6 +78,67 @@ export function Footer({
 
     return () => ctx.revert();
   }, []);
+
+  // Observe footer visibility for wave animation
+  useEffect(() => {
+    const footerEl = footerRef.current;
+    if (!footerEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(footerEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Subtle wave animation inspired by animated-footer
+  useEffect(() => {
+    let t = 0;
+
+    const animateWave = () => {
+      const waveElements = waveRefs.current;
+      let offset = 0;
+
+      waveElements.forEach((element, index) => {
+        if (element) {
+          offset += Math.max(0, 10 * Math.sin((t + index) * 0.28));
+          element.style.transform = `translateY(${index * 0.4 + offset}px)`;
+        }
+      });
+
+      t += 0.08;
+      animationFrameRef.current = requestAnimationFrame(animateWave);
+    };
+
+    if (isVisible) {
+      if (!animationFrameRef.current) {
+        animateWave();
+      }
+    } else if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [isVisible]);
+
+  const handleBackToTop = () => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <footer ref={footerRef} className="scene-section border-t border-ivory/10 text-ivory/80">
@@ -156,12 +220,50 @@ export function Footer({
 
         <Separator className="my-8 bg-ivory/10" />
 
-        <p className="mb-3 text-center text-[10px] uppercase tracking-[0.36em] text-ivory/50">
-          Conçu comme un carnet de sable et de silence.
-        </p>
-        <p className="text-center text-[10px] uppercase tracking-[0.32em] text-ivory/40">
-          &copy; {new Date().getFullYear()} {resolvedSiteName}. Tous droits réservés.
-        </p>
+        <div className="flex flex-col items-center gap-3 text-center md:flex-row md:justify-between">
+          <div>
+            <p className="mb-1 text-[10px] uppercase tracking-[0.36em] text-ivory/50">
+              Conçu comme un carnet de sable et de silence.
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.32em] text-ivory/40">
+              &copy; {new Date().getFullYear()} {resolvedSiteName}. Tous droits réservés.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleBackToTop}
+            className="text-[10px] uppercase tracking-[0.32em] text-ivory/55 transition-colors hover:text-ivory"
+          >
+            Retour en haut
+          </button>
+        </div>
+      </div>
+
+      {/* Wave footer inspired by animated-footer, adapted to desert palette */}
+      <div
+        aria-hidden="true"
+        className="mt-4 overflow-hidden"
+        style={{ height: 120 }}
+      >
+        <div>
+          {Array.from({ length: 23 }).map((_, index) => (
+            <div
+              key={index}
+              ref={(el) => {
+                waveRefs.current[index] = el;
+              }}
+              style={{
+                height: `${index + 1}px`,
+                background:
+                  "linear-gradient(to right, rgba(215,180,124,0.8), rgba(246,241,231,0.9))",
+                transition: "transform 0.12s ease",
+                willChange: "transform",
+                marginTop: "-2px",
+                opacity: 0.16,
+              }}
+            />
+          ))}
+        </div>
       </div>
     </footer>
   );

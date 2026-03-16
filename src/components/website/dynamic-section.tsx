@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Compass, Shield, Star, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import type { DynamicSection as DynamicSectionType } from "@/types/section";
+import { TestimonialsSection } from "@/components/ui/testimonials-with-marquee";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -267,6 +268,34 @@ export function DynamicSection({ section }: DynamicSectionProps) {
   }, [section.layout_type]);
 
   const content = section.content as Record<string, unknown>;
+
+  if (section.section_key === "testimonials") {
+    const quotes =
+      ((content.quotes as Array<{
+        name: string;
+        location?: string;
+        text: string;
+        rating?: number;
+      }>) ?? []) || [];
+
+    const testimonials = quotes.map((quote, index) => ({
+      author: {
+        name: quote.name,
+        location: quote.location,
+      },
+      text: quote.text,
+      rating: quote.rating ?? 5,
+      href: undefined,
+    }));
+
+    return (
+      <TestimonialsSection
+        title={section.title}
+        description={section.subtitle ?? undefined}
+        testimonials={testimonials}
+      />
+    );
+  }
 
   return (
     <section

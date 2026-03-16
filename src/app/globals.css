@@ -528,6 +528,11 @@ body::after {
   transform: translate(-50%, 50%);
 }
 
+/* Layout utility for constrained content width */
+.max-w-container {
+  max-width: 80rem; /* 1280px */
+}
+
 .artisan-card {
   position: relative;
   overflow: hidden;
@@ -573,6 +578,21 @@ body::after {
   animation: glint-sweep 16s ease-in-out infinite;
   pointer-events: none;
   opacity: 0.6;
+}
+
+/* Horizontal marquee animation for testimonial rail */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap, 1rem)));
+  }
+}
+
+.animate-marquee {
+  animation: marquee var(--duration, 40s) linear infinite;
+  will-change: transform;
 }
 
 .nav-dot {

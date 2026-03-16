@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/website/navigation";
+import { Header } from "@/components/website/header";
 import { Footer } from "@/components/website/footer";
 import { MusicPlayer } from "@/components/website/music-player";
 import { unstable_noStore as noStore } from "next/cache";
@@ -175,7 +176,7 @@ export default async function PublicLayout({
   ]);
   return (
     <LenisProvider>
-      <Navigation
+      <Header
         sections={navSections}
         siteName={publicSettings.siteName}
         siteLogo={publicSettings.siteLogo}
