@@ -2,5 +2,6 @@
 insert into site_settings (key, value)
 values
   ('notification_admin_emails', '[]'::jsonb),
-  ('notification_telegram_chat_ids', '[]'::jsonb)
+  ('notification_telegram_chat_ids', '[]'::jsonb),
+  ('notification_telegram_enabled', 'false'::jsonb)
 on conflict (key) do nothing;

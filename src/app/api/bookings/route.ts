@@ -82,7 +82,11 @@ export async function POST(request: Request) {
         const { data: settingsRows } = await supabase
           .from("site_settings")
           .select("key, value")
-          .in("key", ["notification_admin_emails", "notification_telegram_chat_ids"]);
+          .in("key", [
+            "notification_admin_emails",
+            "notification_telegram_chat_ids",
+            "notification_telegram_enabled",
+          ]);
 
         const settingsMap: Record<string, unknown> = {};
         for (const row of settingsRows ?? []) {
@@ -110,10 +114,24 @@ export async function POST(request: Request) {
 
         const adminEmails = toEmailList(settingsMap.notification_admin_emails);
         const telegramChatIds = toChatIdList(settingsMap.notification_telegram_chat_ids);
+        const telegramEnabled =
+          settingsMap.notification_telegram_enabled === true ||
+          settingsMap.notification_telegram_enabled === "true" ||
+          settingsMap.notification_telegram_enabled === 1;
+
+        const emailPromise = sendBookingNotificationEmail(
+          payload,
+          adminBookingUrl,
+          adminEmails
+        );
+        const telegramPromise =
+          telegramEnabled && telegramChatIds.length > 0
+            ? sendTelegramBookingNotification(payload, adminBookingUrl, telegramChatIds)
+            : Promise.resolve({ success: true });
 
         const [emailResult, telegramResult] = await Promise.allSettled([
-          sendBookingNotificationEmail(payload, adminBookingUrl, adminEmails),
-          sendTelegramBookingNotification(payload, adminBookingUrl, telegramChatIds),
+          emailPromise,
+          telegramPromise,
         ]);
 
         if (emailResult.status === "rejected") {

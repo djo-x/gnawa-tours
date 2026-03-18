@@ -87,6 +87,7 @@ export default function SettingsPage() {
   const [notificationEmailInput, setNotificationEmailInput] = useState("");
   const [notificationTelegramChatIds, setNotificationTelegramChatIds] = useState<string[]>([]);
   const [notificationTelegramInput, setNotificationTelegramInput] = useState("");
+  const [notificationTelegramEnabled, setNotificationTelegramEnabled] = useState(false);
   const { media, loading: mediaLoading, refresh } = useMediaLibrary();
 
   const fetchData = useCallback(async () => {
@@ -114,6 +115,7 @@ export default function SettingsPage() {
       setMusicEnabled(toBool(map.ambient_music_enabled));
       setNotificationAdminEmails(normalizeStringArray(map.notification_admin_emails));
       setNotificationTelegramChatIds(normalizeStringArray(map.notification_telegram_chat_ids));
+      setNotificationTelegramEnabled(toBool(map.notification_telegram_enabled));
     }
   }, []);
 
@@ -161,6 +163,7 @@ export default function SettingsPage() {
       updateSiteSetting("ambient_music_tracks", musicTracks),
       updateSiteSetting("notification_admin_emails", notificationAdminEmails),
       updateSiteSetting("notification_telegram_chat_ids", notificationTelegramChatIds),
+      updateSiteSetting("notification_telegram_enabled", notificationTelegramEnabled),
     ];
 
     const results = await Promise.all(updates);
@@ -541,6 +544,32 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <Label htmlFor="notification_telegram_enabled">Notifications Telegram</Label>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Activer l’envoi de messages Telegram aux chats configurés ci‑dessous.
+                    </p>
+                  </div>
+                  <button
+                    id="notification_telegram_enabled"
+                    type="button"
+                    role="switch"
+                    aria-checked={notificationTelegramEnabled}
+                    onClick={() => setNotificationTelegramEnabled((prev) => !prev)}
+                    className={`relative inline-flex h-7 w-12 items-center rounded-full border transition ${
+                      notificationTelegramEnabled
+                        ? "border-gold/70 bg-gold/30"
+                        : "border-border/70 bg-muted/40"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 rounded-full bg-ivory transition ${
+                        notificationTelegramEnabled ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
                 <Label>IDs de chat Telegram</Label>
                 <div className="flex flex-wrap gap-2">
                   <Input
