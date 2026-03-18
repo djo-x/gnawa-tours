@@ -142,7 +142,7 @@ export async function POST(request: Request) {
         if (telegramResult.status === "rejected") {
           console.error("[bookings] Telegram notification failed:", telegramResult.reason);
         } else if (telegramResult.value && !telegramResult.value.success) {
-          console.error("[bookings] Telegram error:", telegramResult.value.error);
+          console.error("[bookings] Telegram error:", (telegramResult.value as { error?: string }).error);
         }
       }
     }
